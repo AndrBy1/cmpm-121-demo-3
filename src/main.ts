@@ -21,6 +21,9 @@ const map = leaflet.map("map", {
   zoom: 13,
 });
 
+const playerMarker = leaflet.marker(playerLocation);
+playerMarker.bindPopup("Player Location").openPopup();
+
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
