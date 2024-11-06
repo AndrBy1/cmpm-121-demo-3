@@ -17,3 +17,7 @@ Button1.addEventListener("click", () => {
 
 const playerLocation = leaflet.latLng(36.98949379578401, -122.06277128548504);
 
+const map = leaflet.map("map", {
+  center: playerLocation,
+  zoom: 13,
+});
