@@ -21,14 +21,18 @@ const playerLocation = leaflet.latLng(36.98949379578401, -122.06277128548504);
 
 const map = leaflet.map("map", {
   center: playerLocation,
-  zoom: 13,
+  zoom: 19,
 });
 
 const playerMarker = leaflet.marker(playerLocation);
 playerMarker.bindPopup("Player Location").openPopup();
+playerMarker.addTo(map);
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
+  
   attribution:
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
+
+function generateCache()
+{}
