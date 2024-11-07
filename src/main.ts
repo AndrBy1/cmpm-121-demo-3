@@ -74,7 +74,14 @@ function generateCache(x: number, y: number) {
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `<div> "${popupText}".</div> 
-      "${collectButton}"`;
+      <button id="collect">collect</button>
+      <button id="deposit">deposit</button>`;
+
+    popupContent.querySelector<HTMLButtonElement>("#collect")!
+      .addEventListener("click", () => {
+        totalCoin += coinValue;
+        coinValue = 0;
+      });
 
     return popupContent;
   });
