@@ -7,6 +7,8 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
+let totalCoin = 0;
+
 const cellDegrees = 0.0001;
 const message = "You clicked the button!";
 const Button1 = document.createElement("button");
@@ -56,13 +58,22 @@ for (
 }
 
 function generateCache(x: number, y: number) {
-  const coinCount = 1;
+  let coinCount = 1;
+
+  const collectButton = document.createElement("button");
+  collectButton.textContent = "collect coin";
+  Button1.addEventListener("click", () => {
+    totalCoin++;
+    coinCount--;
+  });
+
   const cacheLocation = leaflet.latLng(x, y);
   const popupContent = "Cache at " + x + ", " + y + ".\n Coin count is " +
     coinCount;
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(popupContent).openPopup();
   cacheMarker.addTo(map);
+
   /*
   const bounds = leaflet.latLngBounds([
     [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
