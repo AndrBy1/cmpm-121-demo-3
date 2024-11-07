@@ -36,8 +36,8 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-for (let x = playerLat - localSize; x < localSize; x++) {
-  for (let y = 0; y < localSize; y++) {
+for (let x = playerLat - localSize; x < playerLat + localSize; x++) {
+  for (let y = playerLng - localSize; y < playerLng + localSize; y++) {
     generateCache(x, y);
   }
 }
@@ -45,6 +45,8 @@ for (let x = playerLat - localSize; x < localSize; x++) {
 function generateCache(x: number, y: number) {
   const cacheLocation = leaflet.latLng(x, y);
   const cacheMarker = leaflet.marker(cacheLocation);
+  cacheMarker.bindPopup("cache here").openPopup();
+  cacheMarker.addTo(map);
   /*
   const bounds = leaflet.latLngBounds([
     [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
