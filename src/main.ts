@@ -58,15 +58,13 @@ for (
 }
 
 function generateCache(x: number, y: number) {
-  let coinValue = 1;
-
   const cacheLocation = leaflet.latLng(x, y);
-  const popupText = "Cache at " + x + ", " + y + ".\n Coin value is " +
-    coinValue;
+  const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(() => {
+    let coinValue = 1;
     const popupContent = document.createElement("div");
-    popupContent.innerHTML = `<div> "${popupText}".</div> 
+    popupContent.innerHTML = `<div> "${popupText + coinValue}\n".</div> 
       <button id="collect">collect</button>
       <button id="deposit">deposit</button>`;
 
@@ -87,12 +85,4 @@ function generateCache(x: number, y: number) {
     return popupContent;
   });
   cacheMarker.addTo(map);
-
-  /*
-  const bounds = leaflet.latLngBounds([
-    [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
-    [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
-  ]);
-  const rect = leaflet.rectangle(bounds);
-  rect.addTo(map);*/
 }
