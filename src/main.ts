@@ -60,13 +60,6 @@ for (
 function generateCache(x: number, y: number) {
   let coinValue = 1;
 
-  const collectButton = document.createElement("button");
-  collectButton.textContent = "collect coin";
-  Button1.addEventListener("click", () => {
-    totalCoin += coinValue;
-    coinValue = 0;
-  });
-
   const cacheLocation = leaflet.latLng(x, y);
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is " +
     coinValue;
