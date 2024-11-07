@@ -62,7 +62,14 @@ function generateCache(x: number, y: number) {
 
   const collectButton = document.createElement("button");
   collectButton.textContent = "collect coin";
-  Button1.addEventListener("click", () => {
+  collectButton.addEventListener("click", () => {
+    totalCoin += coinValue;
+    coinValue = 0;
+  });
+
+  const depositButton = document.createElement("button");
+  depositButton.textContent = "collect coin";
+  depositButton.addEventListener("click", () => {
     totalCoin += coinValue;
     coinValue = 0;
   });
@@ -74,8 +81,8 @@ function generateCache(x: number, y: number) {
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("dic");
     popupContent.innerHTML = `<div> "${popupText}".</div> 
-      <button id="collect">collect</button>
-      <button id="deposit">deposit</button>`;
+      <button>"${collectButton}"</button>
+      <button>"${depositButton}"</button>`;
 
     return popupContent;
   });
