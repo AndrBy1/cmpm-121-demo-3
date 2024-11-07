@@ -65,9 +65,10 @@ function generateCache(x: number, y: number) {
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(() => {
-    let coinValue = 1;
+    let coinValue = 3;
     const popupContent = document.createElement("div");
-    popupContent.innerHTML = `<div> "${popupText + coinValue}\n".</div> 
+    popupContent.innerHTML = `
+      <div> "${popupText}<span id="count">${coinValue}</span>\n".</div> 
       <button id="collect">collect</button>
       <button id="deposit">deposit</button>`;
 
@@ -76,6 +77,9 @@ function generateCache(x: number, y: number) {
         console.log("collect clicked");
         totalCoin += coinValue;
         coinValue = 0;
+        coinDisplay.innerHTML = "Coins: " + totalCoin;
+        popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
+          coinValue.toString();
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
@@ -83,6 +87,9 @@ function generateCache(x: number, y: number) {
         console.log("deposit clicked");
         coinValue += totalCoin;
         totalCoin = 0;
+        coinDisplay.innerHTML = "Coins: " + totalCoin;
+        popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
+          coinValue.toString();
       });
 
     return popupContent;
