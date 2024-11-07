@@ -17,6 +17,7 @@ Button1.addEventListener("click", () => {
   alert(message);
 });
 
+const localSize = 5;
 const playerLocation = leaflet.latLng(36.98949379578401, -122.06277128548504);
 
 const map = leaflet.map("map", {
@@ -33,7 +34,13 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-function generateCache() {
+for (let x = 0; x < localSize; x++) {
+  for (let y = 0; y < localSize; y++) {
+    generateCache(x, y);
+  }
+}
+
+function generateCache(x: number, y: number) {
   const bounds = leaflet.latLngBounds([
     [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
     [playerLocation.lat + cellDegrees, playerLocation.lng + cellDegrees],
