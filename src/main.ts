@@ -1,6 +1,5 @@
+//got help from https://leafletjs.com/reference.html
 // deno-lint-ignore-file
-// todo
-// todo
 // @deno-types="npm:@types/leaflet@^1.9.14"
 import leaflet from "leaflet";
 
@@ -13,14 +12,6 @@ const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + totalCoin;
 
 const cellDegrees = 0.0001;
-const message = "You clicked the button!";
-const Button1 = document.createElement("button");
-Button1.textContent = "Click";
-document.body.append(Button1);
-
-Button1.addEventListener("click", () => {
-  alert(message);
-});
 
 const localSize = 10;
 const playerLat = 36.98949379578401;
@@ -93,11 +84,9 @@ function popupButtonClick(
   content: HTMLDivElement,
 ) {
   if (collect && coinNum > 0) {
-    console.log("collect clicked");
     totalCoin++;
     coinNum--;
   } else if (!collect && totalCoin > 0) {
-    console.log("collect deposited");
     totalCoin--;
     coinNum++;
   }
