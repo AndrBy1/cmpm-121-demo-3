@@ -74,14 +74,7 @@ function generateCache(x: number, y: number) {
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        if (coinValue > 0) {
-          console.log("collect clicked");
-          totalCoin++;
-          coinValue--;
-          coinDisplay.innerHTML = "Coins: " + totalCoin;
-          popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
-            coinValue.toString();
-        }
+        coinValue = popupButtonClick(true, coinValue, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
@@ -101,16 +94,22 @@ function generateCache(x: number, y: number) {
   cacheMarker.addTo(map);
 }
 
-function popupButtonClick(C: boolean, coinNum: number) {
-  if (C) {
+function popupButtonClick(
+  collect: boolean,
+  coinNum: number,
+  content: HTMLDivElement,
+) {
+  if (collect && coinNum > 0) {
     console.log("collect clicked");
     totalCoin++;
     coinNum--;
-  } else {
+  } else if (!collect && totalCoin > 0) {
     console.log("collect deposited");
     totalCoin--;
     coinNum++;
   }
   coinDisplay.innerHTML = "Coins: " + totalCoin;
+  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = coinNum
+    .toString();
   return coinNum;
 }
