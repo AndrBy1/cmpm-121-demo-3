@@ -51,9 +51,12 @@ for (
 }
 
 function generateCache(x: number, y: number) {
+  const coinCount = 1;
   const cacheLocation = leaflet.latLng(x, y);
+  const popupContent = "Cache at " + x + ", " + y + ".\n Coin count is " +
+    coinCount;
   const cacheMarker = leaflet.marker(cacheLocation);
-  cacheMarker.bindPopup("cache here").openPopup();
+  cacheMarker.bindPopup(popupContent).openPopup();
   cacheMarker.addTo(map);
   /*
   const bounds = leaflet.latLngBounds([
