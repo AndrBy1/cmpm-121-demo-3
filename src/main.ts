@@ -62,14 +62,7 @@ function generateCache(x: number, y: number) {
 
   const collectButton = document.createElement("button");
   collectButton.textContent = "collect coin";
-  collectButton.addEventListener("click", () => {
-    totalCoin += coinValue;
-    coinValue = 0;
-  });
-
-  const depositButton = document.createElement("button");
-  depositButton.textContent = "collect coin";
-  depositButton.addEventListener("click", () => {
+  Button1.addEventListener("click", () => {
     totalCoin += coinValue;
     coinValue = 0;
   });
@@ -79,10 +72,9 @@ function generateCache(x: number, y: number) {
     coinValue;
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(() => {
-    const popupContent = document.createElement("dic");
+    const popupContent = document.createElement("div");
     popupContent.innerHTML = `<div> "${popupText}".</div> 
-      <button>"${collectButton}"</button>
-      <button>"${depositButton}"</button>`;
+      "${collectButton}"`;
 
     return popupContent;
   });
