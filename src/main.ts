@@ -107,6 +107,11 @@ function popupButtonClick(C: boolean, coinNum: number) {
     totalCoin++;
     coinNum--;
     coinDisplay.innerHTML = "Coins: " + totalCoin;
-    return coinNum;
+  } else {
+    console.log("collect deposited");
+    totalCoin--;
+    coinNum++;
+    coinDisplay.innerHTML = "Coins: " + totalCoin;
   }
+  return coinNum;
 }
