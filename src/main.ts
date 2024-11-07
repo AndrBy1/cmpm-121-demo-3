@@ -13,7 +13,7 @@ coinDisplay.innerHTML = "Coins: " + totalCoin;
 
 const cellDegrees = 0.0001;
 
-const localSize = 10;
+const localSize = 8;
 const playerLat = 36.98949379578401;
 const playerLng = -122.06277128548504;
 const playerLocation = leaflet.latLng(playerLat, playerLng);
@@ -44,7 +44,7 @@ for (
     y < playerLng + localSize * cellDegrees;
     y += cellDegrees
   ) {
-    randomNum = (Math.random() * (100 - 1 + 1)) + 1;
+    randomNum = genRandom(1, 100);
     if (randomNum <= 10) {
       generateCache(x, y);
     }
@@ -56,7 +56,7 @@ function generateCache(x: number, y: number) {
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(() => {
-    let coinValue = 3;
+    let coinValue = genRandom(1, 6);
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
       <div> "${popupText}<span id="count">${coinValue}</span>\n".</div> 
@@ -76,6 +76,10 @@ function generateCache(x: number, y: number) {
     return popupContent;
   });
   cacheMarker.addTo(map);
+}
+
+function genRandom(min: number, max: number) {
+  return Math.floor((Math.random() * (max - min + 1)) + min);
 }
 
 function popupButtonClick(
