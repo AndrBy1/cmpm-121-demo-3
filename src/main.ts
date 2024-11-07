@@ -36,6 +36,8 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
+let randomNum: number;
+
 for (
   let x = playerLat - localSize * cellDegrees;
   x < playerLat + localSize * cellDegrees;
@@ -46,7 +48,10 @@ for (
     y < playerLng + localSize * cellDegrees;
     y += cellDegrees
   ) {
-    generateCache(x, y);
+    randomNum = (Math.random() * (100 - 1 + 1)) + 1;
+    if (randomNum <= 10) {
+      generateCache(x, y);
+    }
   }
 }
 
