@@ -79,14 +79,7 @@ function generateCache(x: number, y: number) {
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        if (totalCoin > 0) {
-          console.log("collect clicked");
-          totalCoin--;
-          coinValue++;
-          coinDisplay.innerHTML = "Coins: " + totalCoin;
-          popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
-            coinValue.toString();
-        }
+        coinValue = popupButtonClick(false, coinValue, popupContent);
       });
 
     return popupContent;
