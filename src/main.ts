@@ -100,6 +100,13 @@ function generateCache(x: number, y: number) {
   });
   cacheMarker.addTo(map);
 }
-/*
-function popupButtonClick()
-{}*/
+
+function popupButtonClick(C: boolean, coinNum: number) {
+  if (C) {
+    console.log("collect clicked");
+    totalCoin++;
+    coinNum--;
+    coinDisplay.innerHTML = "Coins: " + totalCoin;
+    return coinNum;
+  }
+}
