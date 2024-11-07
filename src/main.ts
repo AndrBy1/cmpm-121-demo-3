@@ -74,25 +74,32 @@ function generateCache(x: number, y: number) {
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        console.log("collect clicked");
-        totalCoin += coinValue;
-        coinValue = 0;
-        coinDisplay.innerHTML = "Coins: " + totalCoin;
-        popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
-          coinValue.toString();
+        if (coinValue > 0) {
+          console.log("collect clicked");
+          totalCoin++;
+          coinValue--;
+          coinDisplay.innerHTML = "Coins: " + totalCoin;
+          popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
+            coinValue.toString();
+        }
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        console.log("deposit clicked");
-        coinValue += totalCoin;
-        totalCoin = 0;
-        coinDisplay.innerHTML = "Coins: " + totalCoin;
-        popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
-          coinValue.toString();
+        if (totalCoin > 0) {
+          console.log("collect clicked");
+          totalCoin--;
+          coinValue++;
+          coinDisplay.innerHTML = "Coins: " + totalCoin;
+          popupContent.querySelector<HTMLSpanElement>("#count")!.innerHTML =
+            coinValue.toString();
+        }
       });
 
     return popupContent;
   });
   cacheMarker.addTo(map);
 }
+/*
+function popupButtonClick()
+{}*/
