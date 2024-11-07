@@ -9,6 +9,9 @@ import "./style.css";
 
 let totalCoin = 0;
 
+const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
+coinDisplay.innerHTML = "Coins: " + totalCoin;
+
 const cellDegrees = 0.0001;
 const message = "You clicked the button!";
 const Button1 = document.createElement("button");
