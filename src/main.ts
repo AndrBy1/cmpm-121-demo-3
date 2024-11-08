@@ -6,6 +6,8 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
+import "./board.ts";
+
 let totalCoin = 0;
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
@@ -14,14 +16,12 @@ coinDisplay.innerHTML = "Coins: " + totalCoin;
 const cellDegrees = 0.0001;
 
 const localSize = 8;
-const playerLat = 36.98949379578401;
-const playerLng = -122.06277128548504;
-const playerLocation = leaflet.latLng(playerLat, playerLng);
-
-interface Cell {
-  readonly i: number;
-  readonly j: number;
-}
+const playerLat = 369894;
+const playerLng = -1220627;
+const playerLocation = leaflet.latLng(
+  playerLat * cellDegrees,
+  playerLng * cellDegrees,
+);
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -40,18 +40,18 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 let randomNum: number;
 
 for (
-  let x = playerLat - localSize * cellDegrees;
-  x < playerLat + localSize * cellDegrees;
-  x += cellDegrees
+  let x = playerLat - localSize;
+  x < playerLat + localSize;
+  x++
 ) {
   for (
-    let y = playerLng - localSize * cellDegrees;
-    y < playerLng + localSize * cellDegrees;
-    y += cellDegrees
+    let y = playerLng - localSize;
+    y < playerLng + localSize;
+    y++
   ) {
     randomNum = genRandom(1, 100);
     if (randomNum <= 10) {
-      generateCache(x, y);
+      generateCache(x * cellDegrees, y * cellDegrees);
     }
   }
 }
