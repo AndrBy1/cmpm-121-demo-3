@@ -8,10 +8,11 @@ interface Cell {
 }
 
 interface board {
-  readonly map: leaflet.Map;
   readonly knownCells: Map<string, Cell>;
   readonly cellDegrees: number;
   readonly tileVisibilityRadius: number;
+  playerLocation: Cell;
+  map: leaflet.Map;
   generateCache(x: number, y: number): void;
   genRandom(min: number, max: number): number;
   popupButtonClick(
@@ -19,4 +20,8 @@ interface board {
     coinNum: number,
     content: HTMLDivElement,
   ): number;
+  getCanonicalCell(cell: Cell): Cell;
+  getCellForPoint(point: leaflet.LatLng): Cell;
+  getCellBounds(cell: Cell): leaflet.LatLngBounds;
+  getCellsNearPoint(point: leaflet.LatLng): Cell[];
 }
