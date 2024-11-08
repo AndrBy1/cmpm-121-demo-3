@@ -18,6 +18,11 @@ const playerLat = 36.98949379578401;
 const playerLng = -122.06277128548504;
 const playerLocation = leaflet.latLng(playerLat, playerLng);
 
+interface Cell {
+  readonly i: number;
+  readonly j: number;
+}
+
 const map = leaflet.map("map", {
   center: playerLocation,
   zoom: 19,
