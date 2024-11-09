@@ -49,17 +49,26 @@ for (
     y < playerLocation.lng + localSize * 0.0001;
     y += 0.0001
   ) {
+    generateCells(x, y);
     randomNum = genRandom(1, 100);
     if (randomNum <= 10) {
-      generateCache(x, y);
     }
   }
 }
 
+function generateCells(x: number, y: number) {
+  accessBoard.setNewCell(x, y); //every cell is created
+  randomNum = genRandom(1, 100); //but only 10% of them has a cache
+  if (randomNum <= 10) {
+    generateCache(x, y);
+  }
+}
+
 function generateCache(x: number, y: number) {
-  const cacheLocation = leaflet.latLng(x, y); //need to change
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
-  const cacheMarker = leaflet.marker(cacheLocation);
+  const cacheMarker = leaflet.marker(
+    accessBoard.getLatLngOfKnown(accessBoard.getKnown().length),
+  );
   cacheMarker.bindPopup(() => {
     let coinValue = genRandom(1, 6);
     const popupContent = document.createElement("div");
