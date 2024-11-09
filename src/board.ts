@@ -62,6 +62,6 @@ export const accessBoard: board = {
   },
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
-    return leaflet.latLng(cell.i, cell.j);
+    return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
   },
 };

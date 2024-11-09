@@ -19,13 +19,10 @@ const localSize = 8;
 const playerLat = 369894;
 const playerLng = -1220627;
 const playerCell = { i: playerLat, j: -1220627 };
-const playerLocation = leaflet.latLng(
-  playerLat * cellDegrees,
-  playerLng * cellDegrees,
-);
+const playerLocation = accessBoard.getLatLngOfCell(playerCell);
 
 const map = leaflet.map("map", {
-  center: accessBoard.getLatLngOfCell(playerCell),
+  center: playerLocation,
   zoom: 19,
 });
 
