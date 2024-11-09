@@ -10,16 +10,8 @@ interface Cell {
 interface board {
   readonly cellDegrees: number;
   readonly tileVisibilityRadius: number;
-  knownCells: Cell[];
   playerLocation: Cell;
-  map: leaflet.Map;
-  generateCache(x: number, y: number): void;
-  genRandom(min: number, max: number): number;
-  popupButtonClick(
-    collect: boolean,
-    coinNum: number,
-    content: HTMLDivElement,
-  ): number;
+  knownCells: Cell[];
   //getCanonicalCell(cell: Cell): Cell;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
@@ -31,10 +23,6 @@ const accessBoard: board = {
   tileVisibilityRadius: 0,
   knownCells: [],
   playerLocation: { i: 369894, j: -1220627 },
-  map: leaflet.map("map", {
-    center: { i: 369894, j: -1220627 },
-    zoom: 19,
-  }),
   /*
   getCanonicalCell(cell: Cell): Cell {
     const { i, j } = cell;
@@ -61,19 +49,5 @@ const accessBoard: board = {
     const originCell = this.getCellForPoint(point);
     // ...
     return resultCells;
-  },
-
-  generateCache: function (x: number, y: number): void {
-    throw new Error("Function not implemented.");
-  },
-  genRandom: function (min: number, max: number): number {
-    throw new Error("Function not implemented.");
-  },
-  popupButtonClick: function (
-    collect: boolean,
-    coinNum: number,
-    content: HTMLDivElement,
-  ): number {
-    throw new Error("Function not implemented.");
   },
 };
