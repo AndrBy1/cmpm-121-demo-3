@@ -5,6 +5,7 @@ import leaflet from "leaflet";
 interface Cell {
   readonly i: number;
   readonly j: number;
+  //readonly serial: number;
 }
 
 interface board {
@@ -19,7 +20,6 @@ interface board {
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
-  getPlayerLatLng(): leaflet.LatLng;
 }
 
 export const B: board = {
@@ -64,8 +64,5 @@ export const B: board = {
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
     return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
-  },
-  getPlayerLatLng(): leaflet.LatLng {
-    return this.getLatLngOfCell(this.playerLocation);
   },
 };
