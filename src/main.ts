@@ -6,7 +6,7 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import { B } from "./board.ts";
+import { B, type Cell } from "./board.ts";
 
 let totalCoin = 0;
 
@@ -15,6 +15,9 @@ coinDisplay.innerHTML = "Coins: " + totalCoin;
 
 const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
+
+let coinPurse: Cell[] = [];
+let trackSerial = 0;
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -60,27 +63,34 @@ function generateCache(x: number, y: number) {
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
+  let coinCount = genRandom(1, 6);
+  let localCoins: Cell[];
+  for (let i = 0; i < coinCount; i++) {
+  }
   cacheMarker.bindPopup(() => {
-    let coinValue = genRandom(1, 6);
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
-      <div> "${popupText}<span id="count">${coinValue}</span>\n".</div> 
+      <div> "${popupText}<span id="count">${coinCount}</span>\n".</div> 
       <button id="collect">collect</button>
       <button id="deposit">deposit</button>`;
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        coinValue = popupButtonClick(true, coinValue, popupContent);
+        coinCount = popupButtonClick(true, coinCount, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        coinValue = popupButtonClick(false, coinValue, popupContent);
+        coinCount = popupButtonClick(false, coinCount, popupContent);
       });
 
     return popupContent;
   });
   cacheMarker.addTo(map);
+}
+
+function createCoin(x: number, y: number): Cell {
+  return { i: x, j: y, serial: trackSerial };
 }
 
 function genRandom(min: number, max: number) {
@@ -92,10 +102,10 @@ function popupButtonClick(
   coinNum: number,
   content: HTMLDivElement,
 ) {
-  if (collect && coinNum > 0) {
+  if (collect && coinNum > 0) { //if the collect button clicked
     totalCoin++;
     coinNum--;
-  } else if (!collect && totalCoin > 0) {
+  } else if (!collect && totalCoin > 0) { //if the deposit button clicked
     totalCoin--;
     coinNum++;
   }
