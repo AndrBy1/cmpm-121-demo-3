@@ -5,7 +5,11 @@ import leaflet from "leaflet";
 export interface Cell {
   readonly i: number;
   readonly j: number;
-  readonly serial?: number;
+}
+
+export interface Coin {
+  readonly cell: Cell;
+  readonly serial: number;
 }
 
 interface board {
@@ -40,7 +44,7 @@ export const B: board = {
     return this.knownCells.get(key)!;
   },*/
   setNewCell(i: number, j: number, serialNum?: number): void {
-    this.knownCells.push({ i: i, j: j, serial: serialNum });
+    this.knownCells.push({ i: i, j: j });
   },
   getCellForPoint(point: leaflet.LatLng): Cell {
     return this.knownCells[

@@ -6,7 +6,7 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import { B, type Cell } from "./board.ts";
+import { B, type Cell, type Coin } from "./board.ts";
 
 let totalCoin = 0;
 
@@ -17,7 +17,6 @@ const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
 
 let coinPurse: Cell[] = [];
-let trackSerial = 0;
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -89,8 +88,9 @@ function generateCache(x: number, y: number) {
   cacheMarker.addTo(map);
 }
 
-function createCoin(x: number, y: number): Cell {
-  return { i: x, j: y, serial: trackSerial };
+function createCoin(x: number, y: number, serialNum: number): Coin {
+  const cell: Cell = { i: x, j: y };
+  return { cell, serial: serialNum };
 }
 
 function genRandom(min: number, max: number) {
