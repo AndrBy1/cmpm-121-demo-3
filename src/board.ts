@@ -20,11 +20,9 @@ interface board {
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   getPlayerLatLng(): leaflet.LatLng;
-  getLatLngOfKnown(index: number): leaflet.latLng;
-  getKnown(): Cell[];
 }
 
-export const accessBoard: board = {
+export const B: board = {
   cellDegrees: 0.0001,
   tileVisibilityRadius: 0,
   knownCells: [],
@@ -69,11 +67,5 @@ export const accessBoard: board = {
   },
   getPlayerLatLng(): leaflet.LatLng {
     return this.getLatLngOfCell(this.playerLocation);
-  },
-  getLatLngOfKnown(index: number): leaflet.latLng {
-    return this.getLatLngOfCell(this.knownCells[index]);
-  },
-  getKnown(): Cell[] {
-    return this.knownCells;
   },
 };

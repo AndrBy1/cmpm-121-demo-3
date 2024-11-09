@@ -6,22 +6,15 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import { accessBoard } from "./board.ts";
+import { B } from "./board.ts";
 
 let totalCoin = 0;
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + totalCoin;
 
-const cellDegrees = 0.0001;
-
 const localSize = 8;
-const playerLat = 369894;
-const playerLng = -1220627;
-const playerLocation = accessBoard.getPlayerLatLng();
-
-console.log("player lat: " + playerLocation.lat);
-console.log("player lng: " + playerLocation.lng);
+const playerLocation = B.getLatLngOfCell(B.playerLocation);
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -40,13 +33,13 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 let randomNum: number;
 
 for (
-  let x = playerLocation.lat - localSize * 0.0001;
-  x < playerLocation.lat + localSize * 0.0001;
+  let x = playerLocation.lat - calibCell(localSize, true);
+  x < playerLocation.lat + calibCell(localSize, true);
   x += 0.0001
 ) {
   for (
-    let y = playerLocation.lng - localSize * 0.0001;
-    y < playerLocation.lng + localSize * 0.0001;
+    let y = playerLocation.lng - calibCell(localSize, true);
+    y < playerLocation.lng + calibCell(localSize, true);
     y += 0.0001
   ) {
     generateCells(x, y);
@@ -54,7 +47,7 @@ for (
 }
 
 function generateCells(x: number, y: number) {
-  accessBoard.setNewCell(x / 0.0001, y / 0.0001); //every cell is created
+  B.setNewCell(calibCell(x, false), calibCell(y, false)); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
     console.log("generating cache at " + x + " and " + y);
@@ -64,12 +57,8 @@ function generateCells(x: number, y: number) {
 
 function generateCache(x: number, y: number) {
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
-  console.log(
-    "get lat lng of known: " +
-      accessBoard.getLatLngOfKnown(accessBoard.getKnown().length - 1),
-  );
   const cacheMarker = leaflet.marker(
-    accessBoard.getLatLngOfKnown(accessBoard.getKnown().length - 1),
+    B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
   cacheMarker.bindPopup(() => {
     let coinValue = genRandom(1, 6);
@@ -116,10 +105,10 @@ function popupButtonClick(
   return coinNum;
 }
 
-function calibrateToCell(num: number, shrink: boolean): number {
+function calibCell(num: number, shrink: boolean): number { //calibrate to cell size
   if (shrink) {
-    return num * cellDegrees;
+    return num * B.cellDegrees;
   } else {
-    return num / cellDegrees;
+    return num / B.cellDegrees;
   }
 }
