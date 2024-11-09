@@ -104,11 +104,11 @@ function popupButtonClick(
 ) {
   if (collect && localStash.length > 0) { //if the collect button clicked
     if (localStash.length > 0) {
-      coinPurse.push(localStash.pop());
+      coinPurse.push(localStash.pop()!);
     }
   } else if (!collect && coinPurse.length > 0) { //if the deposit button clicked
     if (coinPurse.length > 0) {
-      localStash.push(coinPurse.pop());
+      localStash.push(coinPurse.pop()!);
     }
   }
   coinDisplay.innerHTML = "Coins: " + coinPurse.length;
