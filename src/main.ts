@@ -54,7 +54,7 @@ for (
 }
 
 function generateCells(x: number, y: number) {
-  accessBoard.setNewCell(x * 10000, y * 10000); //every cell is created
+  accessBoard.setNewCell(x / 0.0001, y / 0.0001); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
     console.log("generating cache at " + x + " and " + y);
@@ -114,4 +114,12 @@ function popupButtonClick(
   content.querySelector<HTMLSpanElement>("#count")!.innerHTML = coinNum
     .toString();
   return coinNum;
+}
+
+function calibrateToCell(num: number, shrink: boolean): number {
+  if (shrink) {
+    return num * cellDegrees;
+  } else {
+    return num / cellDegrees;
+  }
 }
