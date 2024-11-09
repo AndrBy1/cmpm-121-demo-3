@@ -7,12 +7,13 @@ interface Cell {
   readonly j: number;
 }
 
-interface board {
+export default interface board {
   readonly cellDegrees: number;
   readonly tileVisibilityRadius: number;
   playerLocation: Cell;
   knownCells: Cell[];
   //getCanonicalCell(cell: Cell): Cell;
+  getPlayerLocat(): Cell;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
@@ -30,7 +31,9 @@ const accessBoard: board = {
     // ...
     return this.knownCells.get(key)!;
   },*/
-
+  getPlayerLocat(): Cell {
+    return this.playerLocation;
+  },
   getCellForPoint(point: leaflet.LatLng): Cell {
     return this.knownCells[
       this.knownCells.indexOf({

@@ -6,7 +6,7 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import "./board.ts";
+import accessboard from "./board.ts";
 
 let totalCoin = 0;
 
