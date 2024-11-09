@@ -14,11 +14,12 @@ interface board {
   knownCells: Cell[];
   //map: leaflet.Map;
   //getCanonicalCell(cell: Cell): Cell;
-  getPlayerLocat(): Cell;
+
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
+  getPlayerLatLng(): leaflet.LatLng;
 }
 
 export const accessBoard: board = {
@@ -38,9 +39,7 @@ export const accessBoard: board = {
     // ...
     return this.knownCells.get(key)!;
   },*/
-  getPlayerLocat(): Cell {
-    return this.playerLocation;
-  },
+
   getCellForPoint(point: leaflet.LatLng): Cell {
     return this.knownCells[
       this.knownCells.indexOf({
@@ -63,5 +62,9 @@ export const accessBoard: board = {
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
     return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
+  },
+
+  getPlayerLatLng(): leaflet.LatLng {
+    return this.getLatLngOfCell(this.playerLocation);
   },
 };
