@@ -50,24 +50,26 @@ for (
     y += 0.0001
   ) {
     generateCells(x, y);
-    randomNum = genRandom(1, 100);
-    if (randomNum <= 10) {
-    }
   }
 }
 
 function generateCells(x: number, y: number) {
-  accessBoard.setNewCell(x, y); //every cell is created
+  accessBoard.setNewCell(x * 10000, y * 10000); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
+    console.log("generating cache at " + x + " and " + y);
     generateCache(x, y);
   }
 }
 
 function generateCache(x: number, y: number) {
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
+  console.log(
+    "get lat lng of known: " +
+      accessBoard.getLatLngOfKnown(accessBoard.getKnown().length - 1),
+  );
   const cacheMarker = leaflet.marker(
-    accessBoard.getLatLngOfKnown(accessBoard.getKnown().length),
+    accessBoard.getLatLngOfKnown(accessBoard.getKnown().length - 1),
   );
   cacheMarker.bindPopup(() => {
     let coinValue = genRandom(1, 6);
