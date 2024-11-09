@@ -6,7 +6,7 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import accessboard from "./board.ts";
+import { accessBoard } from "./board.ts";
 
 let totalCoin = 0;
 
@@ -18,13 +18,14 @@ const cellDegrees = 0.0001;
 const localSize = 8;
 const playerLat = 369894;
 const playerLng = -1220627;
+const playerCell = { i: playerLat, j: -1220627 };
 const playerLocation = leaflet.latLng(
   playerLat * cellDegrees,
   playerLng * cellDegrees,
 );
 
 const map = leaflet.map("map", {
-  center: playerLocation,
+  center: accessBoard.getLatLngOfCell(playerCell),
   zoom: 19,
 });
 
