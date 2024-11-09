@@ -20,6 +20,9 @@ const playerLat = 369894;
 const playerLng = -1220627;
 const playerLocation = accessBoard.getPlayerLatLng();
 
+console.log("player lat: " + playerLocation.lat);
+console.log("player lng: " + playerLocation.lng);
+
 const map = leaflet.map("map", {
   center: playerLocation,
   zoom: 19,
@@ -37,18 +40,18 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 let randomNum: number;
 
 for (
-  let x = playerLat - localSize;
-  x < playerLat + localSize;
-  x++
+  let x = playerLocation.lat - localSize * 0.0001;
+  x < playerLocation.lat + localSize * 0.0001;
+  x += 0.0001
 ) {
   for (
-    let y = playerLng - localSize;
-    y < playerLng + localSize;
-    y++
+    let y = playerLocation.lng - localSize * 0.0001;
+    y < playerLocation.lng + localSize * 0.0001;
+    y += 0.0001
   ) {
     randomNum = genRandom(1, 100);
     if (randomNum <= 10) {
-      generateCache(x * cellDegrees, y * cellDegrees);
+      generateCache(x, y);
     }
   }
 }
