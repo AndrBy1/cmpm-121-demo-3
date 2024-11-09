@@ -8,15 +8,13 @@ import "./style.css";
 
 import { B, type Cell, type Coin } from "./board.ts";
 
-let totalCoin = 0;
-
-const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
-coinDisplay.innerHTML = "Coins: " + totalCoin;
-
 const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
 
-let coinPurse: Cell[] = [];
+let coinPurse: Coin[] = [];
+
+const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
+coinDisplay.innerHTML = "Coins: " + coinPurse.length;
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -49,23 +47,26 @@ for (
 }
 
 function generateCells(x: number, y: number) {
-  B.setNewCell(calibCell(x, false), calibCell(y, false)); //every cell is created
+  const newCell: Cell = { i: calibCell(x, false), j: calibCell(y, false) };
+  B.setNewCell(newCell); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
     console.log("generating cache at " + x + " and " + y);
-    generateCache(x, y);
+    generateCache(newCell);
   }
 }
 
-function generateCache(x: number, y: number) {
-  const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
+function generateCache(cell: Cell) {
+  const popupText = "Cache at " + cell.i + ", " + cell.j + ".\n Coin value is ";
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
   let coinCount = genRandom(1, 6);
-  let localCoins: Cell[];
+  let localCoins: Coin[] = [];
   for (let i = 0; i < coinCount; i++) {
+    localCoins.push(createCoin(cell, i));
   }
+  console.log(localCoins);
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
@@ -75,12 +76,12 @@ function generateCache(x: number, y: number) {
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        coinCount = popupButtonClick(true, coinCount, popupContent);
+        coinCount = popupButtonClick(true, localCoins, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        coinCount = popupButtonClick(false, coinCount, popupContent);
+        coinCount = popupButtonClick(false, localCoins, popupContent);
       });
 
     return popupContent;
@@ -88,9 +89,8 @@ function generateCache(x: number, y: number) {
   cacheMarker.addTo(map);
 }
 
-function createCoin(x: number, y: number, serialNum: number): Coin {
-  const cell: Cell = { i: x, j: y };
-  return { cell, serial: serialNum };
+function createCoin(cell: Cell, serialNum: number): Coin {
+  return { cell: cell, serial: serialNum };
 }
 
 function genRandom(min: number, max: number) {
@@ -99,20 +99,23 @@ function genRandom(min: number, max: number) {
 
 function popupButtonClick(
   collect: boolean,
-  coinNum: number,
+  localStash: Coin[],
   content: HTMLDivElement,
 ) {
-  if (collect && coinNum > 0) { //if the collect button clicked
-    totalCoin++;
-    coinNum--;
-  } else if (!collect && totalCoin > 0) { //if the deposit button clicked
-    totalCoin--;
-    coinNum++;
+  if (collect && localStash.length > 0) { //if the collect button clicked
+    if (localStash.length > 0) {
+      coinPurse.push(localStash.pop());
+    }
+  } else if (!collect && coinPurse.length > 0) { //if the deposit button clicked
+    if (coinPurse.length > 0) {
+      localStash.push(coinPurse.pop());
+    }
   }
-  coinDisplay.innerHTML = "Coins: " + totalCoin;
-  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = coinNum
+  coinDisplay.innerHTML = "Coins: " + coinPurse.length;
+  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
+    .length
     .toString();
-  return coinNum;
+  return localStash.length;
 }
 
 function calibCell(num: number, shrink: boolean): number { //calibrate to cell size

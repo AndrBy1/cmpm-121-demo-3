@@ -19,7 +19,7 @@ interface board {
   knownCells: Cell[];
   //map: leaflet.Map;
   //getCanonicalCell(cell: Cell): Cell;
-  setNewCell(i: number, j: number): void;
+  setNewCell(cell: Cell): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
@@ -43,8 +43,8 @@ export const B: board = {
     // ...
     return this.knownCells.get(key)!;
   },*/
-  setNewCell(i: number, j: number, serialNum?: number): void {
-    this.knownCells.push({ i: i, j: j });
+  setNewCell(cell: Cell, serialNum?: number): void {
+    this.knownCells.push(cell);
   },
   getCellForPoint(point: leaflet.LatLng): Cell {
     return this.knownCells[
