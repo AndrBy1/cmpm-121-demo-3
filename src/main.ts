@@ -57,7 +57,7 @@ for (
 }
 
 function generateCache(x: number, y: number) {
-  const cacheLocation = leaflet.latLng(x, y);
+  const cacheLocation = leaflet.latLng(x, y); //need to change
   const popupText = "Cache at " + x + ", " + y + ".\n Coin value is ";
   const cacheMarker = leaflet.marker(cacheLocation);
   cacheMarker.bindPopup(() => {
