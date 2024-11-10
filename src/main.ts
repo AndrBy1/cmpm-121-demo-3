@@ -9,10 +9,22 @@ import "./style.css";
 import { B, type Cell, type Coin } from "./board.ts";
 
 let coinPurse: Coin[] = [];
+const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
 const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
+
+const directionButtons = Array.from(
+  { length: 4 },
+  () => document.createElement("button"),
+);
+
+directionButtons.forEach((button, i) => {
+  button.innerHTML = `${directions[i]}`;
+
+  document.body.append(button);
+});
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + coinPurse.length;
@@ -31,6 +43,7 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
+let randomNum: number;
 for (
   let x = playerLocation.lat - calibCell(localSize, true);
   x < playerLocation.lat + calibCell(localSize, true);
@@ -45,7 +58,6 @@ for (
   }
 }
 
-let randomNum: number;
 function generateCells(x: number, y: number) {
   const newCell: Cell = { i: calibCell(x, false), j: calibCell(y, false) };
   B.knownCells.push(newCell); //every cell is created
