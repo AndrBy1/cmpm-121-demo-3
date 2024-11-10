@@ -8,12 +8,11 @@ import "./style.css";
 
 import { B, type Cell, type Coin } from "./board.ts";
 
+let coinPurse: Coin[] = [];
 const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
 const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
-
-let coinPurse: Coin[] = [];
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + coinPurse.length;
@@ -32,8 +31,6 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-let randomNum: number;
-
 for (
   let x = playerLocation.lat - calibCell(localSize, true);
   x < playerLocation.lat + calibCell(localSize, true);
@@ -48,6 +45,7 @@ for (
   }
 }
 
+let randomNum: number;
 function generateCells(x: number, y: number) {
   const newCell: Cell = { i: calibCell(x, false), j: calibCell(y, false) };
   B.knownCells.push(newCell); //every cell is created
@@ -68,7 +66,6 @@ function generateCache(cell: Cell) {
   for (let i = 0; i < coinCount; i++) {
     localCoins.push(createCoin(cell, i));
   }
-  console.log(localCoins);
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
