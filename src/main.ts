@@ -10,6 +10,8 @@ import { B, type Cell, type Coin } from "./board.ts";
 
 const localSize = 8;
 const playerLocation = B.getLatLngOfCell(B.playerLocation);
+const cellDegrees = 0.0001;
+B.setCellDegrees(cellDegrees);
 
 let coinPurse: Coin[] = [];
 
@@ -35,12 +37,12 @@ let randomNum: number;
 for (
   let x = playerLocation.lat - calibCell(localSize, true);
   x < playerLocation.lat + calibCell(localSize, true);
-  x += 0.0001
+  x += cellDegrees
 ) {
   for (
     let y = playerLocation.lng - calibCell(localSize, true);
     y < playerLocation.lng + calibCell(localSize, true);
-    y += 0.0001
+    y += cellDegrees
   ) {
     generateCells(x, y);
   }
