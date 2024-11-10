@@ -17,9 +17,6 @@ interface board {
   readonly tileVisibilityRadius: number;
   playerLocation: Cell;
   knownCells: Cell[];
-  //map: leaflet.Map;
-  //getCanonicalCell(cell: Cell): Cell;
-  setNewCell(cell: Cell): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
@@ -31,21 +28,6 @@ export const B: board = {
   tileVisibilityRadius: 0,
   knownCells: [],
   playerLocation: { i: 369894, j: -1220627 },
-  /*
-  map: leaflet.map("map", {
-    center: this.playerLocation,
-    zoom: 19,
-  }),
-
-  getCanonicalCell(cell: Cell): Cell {
-    const { i, j } = cell;
-    const key = [i, j].toString();
-    // ...
-    return this.knownCells.get(key)!;
-  },*/
-  setNewCell(cell: Cell, serialNum?: number): void {
-    this.knownCells.push(cell);
-  },
   getCellForPoint(point: leaflet.LatLng): Cell {
     return this.knownCells[
       this.knownCells.indexOf({

@@ -48,7 +48,7 @@ for (
 
 function generateCells(x: number, y: number) {
   const newCell: Cell = { i: calibCell(x, false), j: calibCell(y, false) };
-  B.setNewCell(newCell); //every cell is created
+  B.knownCells.push(newCell); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
     console.log("generating cache at " + x + " and " + y);
