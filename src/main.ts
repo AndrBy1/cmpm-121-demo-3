@@ -23,7 +23,7 @@ const map = leaflet.map("map", {
   zoom: 19,
 });
 
-const playerMarker = leaflet.marker(playerLocation);
+let playerMarker = leaflet.marker(playerLocation);
 playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
@@ -36,16 +36,19 @@ directionButtons.forEach((button, i) => {
   button.innerHTML = `${directions[i]}`;
   button.addEventListener("click", () => {
     if (i == 0) {
-      B.playerLocation.i + calibCell(B.cellDegrees, false);
+      B.playerLocation.i += calibCell(B.cellDegrees, false);
     } else if (i == 1) {
-      B.playerLocation.i - calibCell(B.cellDegrees, false);
+      B.playerLocation.i -= calibCell(B.cellDegrees, false);
     } else if (i == 2) {
-      B.playerLocation.j + calibCell(B.cellDegrees, false);
+      B.playerLocation.j -= calibCell(B.cellDegrees, false);
     } else if (i == 3) {
-      B.playerLocation.j - calibCell(B.cellDegrees, false);
+      B.playerLocation.j += calibCell(B.cellDegrees, false);
     }
+    console.log(B.playerLocation);
+    playerLocation = B.getLatLngOfCell(B.playerLocation);
+    playerMarker.setLatLng(playerLocation);
   });
-  playerLocation = B.getLatLngOfCell(B.playerLocation);
+
   document.body.append(button);
 });
 
