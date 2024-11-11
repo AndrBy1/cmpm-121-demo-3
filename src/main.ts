@@ -89,8 +89,8 @@ function generateCells(x: number, y: number) {
     }
   });
   B.knownCells.push(newCell); //every cell is created
-  randomNum = genRandom(1, 100); //but only 10% of them has a cache
-  if (randomNum <= 10) {
+  randomNum = genRandom(1, 101); //but only 10% of them has a cache
+  if (randomNum < 5) {
     console.log("generating cache at " + x + " and " + y);
     generateCache(newCell);
   }
