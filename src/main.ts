@@ -53,8 +53,8 @@ directionButtons.forEach((button, i) => {
       B.calibrCell(B.playerLocation[1], true),
     );
     playerMarker.setLatLng(playerLocation);
+    generateCells(B.playerLocation[0], B.playerLocation[1]);
   });
-
   document.body.append(button);
 });
 
@@ -79,20 +79,23 @@ for (
 }
 
 function generateCells(x: number, y: number) {
+  let generate = true;
   const newCell: Cell = {
     i: B.calibrCell(x, false),
     j: B.calibrCell(y, false),
   };
   B.knownCells.forEach((cell) => { //prevent creating new cells when player moves
     if (cell == newCell) {
-      return;
+      generate = false;
     }
   });
-  B.knownCells.push(newCell); //every cell is created
-  randomNum = genRandom(1, 101); //but only 10% of them has a cache
-  if (randomNum < 5) {
-    console.log("generating cache at " + x + " and " + y);
-    generateCache(newCell);
+  if (generate) {
+    B.knownCells.push(newCell); //every cell is created
+    randomNum = genRandom(1, 101); //but only 10% of them has a cache
+    if (randomNum < 5) {
+      console.log("generating cache at " + x + " and " + y);
+      generateCache(newCell);
+    }
   }
 }
 
@@ -101,26 +104,26 @@ function generateCache(cell: Cell) {
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
-  let coinCount = genRandom(1, 6);
+  let coinCount: number;
   let localCoins: Coin[] = [];
-  for (let i = 0; i < coinCount; i++) {
-    localCoins.push(createCoin(cell, i));
+  for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
+    localCoins.push(createCoin(cell, coinCount));
   }
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
-      <div> "${popupText}<span id="count">${coinCount}</span>\n".</div> 
+      <div> "${popupText}<span id="count">${localCoins.length}</span>\n".</div> 
       <button id="collect">collect</button>
       <button id="deposit">deposit</button>`;
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        coinCount = popupButtonClick(true, localCoins, popupContent);
+        popupButtonClick(true, localCoins, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        coinCount = popupButtonClick(false, localCoins, popupContent);
+        popupButtonClick(false, localCoins, popupContent);
       });
 
     return popupContent;
@@ -154,5 +157,4 @@ function popupButtonClick(
   content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
     .length
     .toString();
-  return localStash.length;
 }

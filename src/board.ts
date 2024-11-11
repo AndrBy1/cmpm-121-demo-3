@@ -3,8 +3,8 @@
 import leaflet from "leaflet";
 
 export interface Cell {
-  i: number;
-  j: number;
+  readonly i: number;
+  readonly j: number;
 }
 
 export interface Coin {
