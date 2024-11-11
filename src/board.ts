@@ -15,20 +15,21 @@ export interface Coin {
 interface board {
   readonly tileVisibilityRadius: number;
   cellDegrees: number;
-  playerLocation: Cell;
+  playerLocation: number[];
   knownCells: Cell[];
   setCellDegrees(degree: number): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
+  calibrCell(num: number, shrink: boolean): number;
 }
 
 export const B: board = {
   tileVisibilityRadius: 0,
   cellDegrees: 0.0001,
   knownCells: [],
-  playerLocation: { i: 369894, j: -1220627 },
+  playerLocation: [369894, -1220627],
 
   setCellDegrees(degree: number): void {
     this.cellDegrees = degree;
@@ -55,5 +56,13 @@ export const B: board = {
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
     return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
+  },
+
+  calibrCell(num: number, shrink: boolean): number { //calibrate to cell size
+    if (shrink) {
+      return num * B.cellDegrees;
+    } else {
+      return num / B.cellDegrees;
+    }
   },
 };

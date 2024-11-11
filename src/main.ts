@@ -11,7 +11,10 @@ import { B, type Cell, type Coin } from "./board.ts";
 let coinPurse: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
-let playerLocation = B.getLatLngOfCell(B.playerLocation);
+let playerLocation = leaflet.latLng(
+  B.calibrCell(B.playerLocation[0], true),
+  B.calibrCell(B.playerLocation[1], true),
+);
 const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
 
@@ -36,16 +39,19 @@ directionButtons.forEach((button, i) => {
   button.innerHTML = `${directions[i]}`;
   button.addEventListener("click", () => {
     if (i == 0) {
-      B.playerLocation.i += calibCell(B.cellDegrees, false);
+      B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
     } else if (i == 1) {
-      B.playerLocation.i -= calibCell(B.cellDegrees, false);
+      B.playerLocation[0] -= B.calibrCell(B.cellDegrees, false);
     } else if (i == 2) {
-      B.playerLocation.j -= calibCell(B.cellDegrees, false);
+      B.playerLocation[1] -= B.calibrCell(B.cellDegrees, false);
     } else if (i == 3) {
-      B.playerLocation.j += calibCell(B.cellDegrees, false);
+      B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
     }
     console.log(B.playerLocation);
-    playerLocation = B.getLatLngOfCell(B.playerLocation);
+    playerLocation = leaflet.latLng(
+      B.calibrCell(B.playerLocation[0], true),
+      B.calibrCell(B.playerLocation[1], true),
+    );
     playerMarker.setLatLng(playerLocation);
   });
 
@@ -59,13 +65,13 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let randomNum: number;
 for (
-  let x = playerLocation.lat - calibCell(localSize, true);
-  x < playerLocation.lat + calibCell(localSize, true);
+  let x = playerLocation.lat - B.calibrCell(localSize, true);
+  x < playerLocation.lat + B.calibrCell(localSize, true);
   x += cellDegrees
 ) {
   for (
-    let y = playerLocation.lng - calibCell(localSize, true);
-    y < playerLocation.lng + calibCell(localSize, true);
+    let y = playerLocation.lng - B.calibrCell(localSize, true);
+    y < playerLocation.lng + B.calibrCell(localSize, true);
     y += cellDegrees
   ) {
     generateCells(x, y);
@@ -73,7 +79,15 @@ for (
 }
 
 function generateCells(x: number, y: number) {
-  const newCell: Cell = { i: calibCell(x, false), j: calibCell(y, false) };
+  const newCell: Cell = {
+    i: B.calibrCell(x, false),
+    j: B.calibrCell(y, false),
+  };
+  B.knownCells.forEach((cell) => { //prevent creating new cells when player moves
+    if (cell == newCell) {
+      return;
+    }
+  });
   B.knownCells.push(newCell); //every cell is created
   randomNum = genRandom(1, 100); //but only 10% of them has a cache
   if (randomNum <= 10) {
@@ -141,12 +155,4 @@ function popupButtonClick(
     .length
     .toString();
   return localStash.length;
-}
-
-function calibCell(num: number, shrink: boolean): number { //calibrate to cell size
-  if (shrink) {
-    return num * B.cellDegrees;
-  } else {
-    return num / B.cellDegrees;
-  }
 }
