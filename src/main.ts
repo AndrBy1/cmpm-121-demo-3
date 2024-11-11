@@ -8,6 +8,7 @@ import "./style.css";
 
 import { B, type Cell, type Coin } from "./board.ts";
 
+let randomNum: number;
 let coinPurse: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
@@ -53,7 +54,7 @@ directionButtons.forEach((button, i) => {
       B.calibrCell(B.playerLocation[1], true),
     );
     playerMarker.setLatLng(playerLocation);
-    generateCells(B.playerLocation[0], B.playerLocation[1]);
+    genMapCells();
   });
   document.body.append(button);
 });
@@ -63,18 +64,20 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-let randomNum: number;
-for (
-  let x = playerLocation.lat - B.calibrCell(localSize, true);
-  x < playerLocation.lat + B.calibrCell(localSize, true);
-  x += cellDegrees
-) {
+genMapCells();
+function genMapCells() {
   for (
-    let y = playerLocation.lng - B.calibrCell(localSize, true);
-    y < playerLocation.lng + B.calibrCell(localSize, true);
-    y += cellDegrees
+    let x = playerLocation.lat - B.calibrCell(localSize, true);
+    x < playerLocation.lat + B.calibrCell(localSize, true);
+    x += cellDegrees
   ) {
-    generateCells(x, y);
+    for (
+      let y = playerLocation.lng - B.calibrCell(localSize, true);
+      y < playerLocation.lng + B.calibrCell(localSize, true);
+      y += cellDegrees
+    ) {
+      generateCells(x, y);
+    }
   }
 }
 
@@ -86,7 +89,7 @@ function generateCells(x: number, y: number) {
   };
   B.knownCells.forEach((cell) => { //prevent creating new cells when player moves
     if (cell == newCell) {
-      generate = false;
+      return;
     }
   });
   if (generate) {
