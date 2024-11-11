@@ -79,6 +79,7 @@ function genMapCells() {
       generateCells(x, y);
     }
   }
+  console.log(B.knownCells);
 }
 
 function generateCells(x: number, y: number) {
@@ -87,18 +88,21 @@ function generateCells(x: number, y: number) {
     i: B.calibrCell(x, false),
     j: B.calibrCell(y, false),
   };
-  B.knownCells.forEach((cell) => { //prevent creating new cells when player moves
-    if (cell == newCell) {
+  B.knownCells.forEach((cell) => { //prevent creating new cells when cell already exists
+    if (newCell.i == cell.i && newCell.j == cell.j) {
+      console.log("found A Cell");
       generate = false;
     }
   });
   if (generate) {
-    B.knownCells.push(newCell); //every cell is created
+    B.knownCells.push(newCell);
     randomNum = genRandom(1, 101); //but only 10% of them has a cache
     if (randomNum < 5) {
       console.log("generating cache at " + x + " and " + y);
       generateCache(newCell);
     }
+  } else {
+    return;
   }
 }
 

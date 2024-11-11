@@ -60,9 +60,9 @@ export const B: board = {
 
   calibrCell(num: number, shrink: boolean): number { //calibrate to cell size
     if (shrink) {
-      return num * B.cellDegrees;
+      return Math.floor(num) * B.cellDegrees;
     } else {
-      return num / B.cellDegrees;
+      return Math.floor(num / B.cellDegrees);
     }
   },
 };
