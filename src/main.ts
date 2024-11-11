@@ -89,7 +89,7 @@ function generateCells(x: number, y: number) {
   };
   B.knownCells.forEach((cell) => { //prevent creating new cells when player moves
     if (cell == newCell) {
-      return;
+      generate = false;
     }
   });
   if (generate) {
