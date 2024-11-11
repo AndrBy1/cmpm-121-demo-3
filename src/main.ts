@@ -11,20 +11,9 @@ import { B, type Cell, type Coin } from "./board.ts";
 let coinPurse: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
-const playerLocation = B.getLatLngOfCell(B.playerLocation);
+let playerLocation = B.getLatLngOfCell(B.playerLocation);
 const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
-
-const directionButtons = Array.from(
-  { length: 4 },
-  () => document.createElement("button"),
-);
-
-directionButtons.forEach((button, i) => {
-  button.innerHTML = `${directions[i]}`;
-
-  document.body.append(button);
-});
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + coinPurse.length;
@@ -37,6 +26,28 @@ const map = leaflet.map("map", {
 const playerMarker = leaflet.marker(playerLocation);
 playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
+
+const directionButtons = Array.from(
+  { length: 4 },
+  () => document.createElement("button"),
+);
+
+directionButtons.forEach((button, i) => {
+  button.innerHTML = `${directions[i]}`;
+  button.addEventListener("click", () => {
+    if (i == 0) {
+      B.playerLocation.i + calibCell(B.cellDegrees, false);
+    } else if (i == 1) {
+      B.playerLocation.i - calibCell(B.cellDegrees, false);
+    } else if (i == 2) {
+      B.playerLocation.j + calibCell(B.cellDegrees, false);
+    } else if (i == 3) {
+      B.playerLocation.j - calibCell(B.cellDegrees, false);
+    }
+  });
+  playerLocation = B.getLatLngOfCell(B.playerLocation);
+  document.body.append(button);
+});
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
