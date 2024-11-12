@@ -12,8 +12,8 @@ export interface Coin {
   readonly serial: number;
 }
 
-interface Cache {
-  coins: Coin;
+export interface Cache {
+  coins: Coin[];
 }
 
 interface Momento<T> {

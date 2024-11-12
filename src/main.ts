@@ -6,10 +6,11 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import { B, type Cell, type Coin } from "./board.ts";
+import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
 let randomNum: number;
 let coinPurse: Coin[] = [];
+let totalCache: Cache[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
 let playerLocation = leaflet.latLng(
@@ -111,31 +112,34 @@ function generateCache(cell: Cell) {
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
+  let localCache: Cache = {
+    coins: [],
+  };
   let coinCount: number;
-  let localCoins: Coin[] = [];
   for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
-    localCoins.push(createCoin(cell, coinCount));
+    localCache.coins.push(createCoin(cell, coinCount));
   }
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
-      <div> "${popupText}<span id="count">${localCoins.length}</span>\n".</div> 
+      <div> "${popupText}<span id="count">${localCache.coins.length}</span>\n".</div> 
       <button id="collect">collect</button>
       <button id="deposit">deposit</button>`;
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        popupButtonClick(true, localCoins, popupContent);
+        popupButtonClick(true, localCache.coins, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        popupButtonClick(false, localCoins, popupContent);
+        popupButtonClick(false, localCache.coins, popupContent);
       });
 
     return popupContent;
   });
   cacheMarker.addTo(map);
+  totalCache.push(localCache);
 }
 
 function createCoin(cell: Cell, serialNum: number): Coin {
