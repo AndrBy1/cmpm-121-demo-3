@@ -21,11 +21,11 @@ interface Momento<T> {
   fromMomento(momento: T): void;
 }
 
-interface board {
+interface board extends Momento<string> {
   readonly tileVisibilityRadius: number;
   cellDegrees: number;
   playerLocation: number[];
-
+  knownCache: Cache[];
   knownCells: Cell[];
   setCellDegrees(degree: number): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
@@ -39,6 +39,7 @@ export const B: board = {
   tileVisibilityRadius: 0,
   cellDegrees: 0.0001,
   knownCells: [],
+  knownCache: [],
   playerLocation: [369894, -1220627],
 
   setCellDegrees(degree: number): void {
@@ -68,11 +69,18 @@ export const B: board = {
     return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
   },
 
-  calibrCell(num: number, shrink: boolean): number { //calibrate to cell size
+  calibrCell(num: number, shrink: boolean): number {
     if (shrink) {
       return Math.floor(num) * B.cellDegrees;
     } else {
       return Math.floor(num / B.cellDegrees);
     }
+  },
+
+  toMomento(): string {
+    return this.knownCache.toString();
+  },
+  fromMomento: function (momento: string): void {
+    throw new Error("Function not implemented.");
   },
 };
