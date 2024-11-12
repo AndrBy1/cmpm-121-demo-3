@@ -12,6 +12,10 @@ export interface Coin {
   readonly serial: number;
 }
 
+interface Cache {
+  coins: Coin;
+}
+
 interface Momento<T> {
   toMomento(): T;
   fromMomento(momento: T): void;
@@ -21,6 +25,7 @@ interface board {
   readonly tileVisibilityRadius: number;
   cellDegrees: number;
   playerLocation: number[];
+
   knownCells: Cell[];
   setCellDegrees(degree: number): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
