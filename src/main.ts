@@ -10,7 +10,6 @@ import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
 let randomNum: number;
 let coinPurse: Coin[] = [];
-let totalCache: Cache[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
 const localSize = 8;
 let playerLocation = leaflet.latLng(
@@ -102,8 +101,6 @@ function generateCells(x: number, y: number) {
       console.log("generating cache at " + x + " and " + y);
       generateCache(newCell);
     }
-  } else {
-    return;
   }
 }
 
@@ -139,7 +136,7 @@ function generateCache(cell: Cell) {
     return popupContent;
   });
   cacheMarker.addTo(map);
-  totalCache.push(localCache);
+  B.knownCache.push(localCache);
 }
 
 function createCoin(cell: Cell, serialNum: number): Coin {
