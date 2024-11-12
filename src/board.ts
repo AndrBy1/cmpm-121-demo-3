@@ -12,6 +12,11 @@ export interface Coin {
   readonly serial: number;
 }
 
+interface Momento<T> {
+  toMomento(): T;
+  fromMomento(momento: T): void;
+}
+
 interface board {
   readonly tileVisibilityRadius: number;
   cellDegrees: number;
