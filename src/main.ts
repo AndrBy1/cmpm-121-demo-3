@@ -140,6 +140,9 @@ function generateCache(cell: Cell) {
 
   B.knownCache.push(localCache);
   B.knownCache.forEach((cache) => {
+    if (
+      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] })
+    ) {}
   });
 }
 
