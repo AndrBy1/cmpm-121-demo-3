@@ -86,9 +86,8 @@ export const B: board = {
     this.MomentoCache.push(str);
     return str;
   },
-  fromMomento: function (momento: string): void {
-    const coins: Coin[] = [];
-    const lines = momento.split("/n");
-    throw new Error("Function not implemented.");
+  fromMomento(momento: string): void {
+    const cache: Cache = JSON.parse(momento);
+    this.knownCache.push(cache);
   },
 };
