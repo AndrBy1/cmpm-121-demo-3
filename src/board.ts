@@ -18,7 +18,7 @@ export interface Cache {
 }
 
 interface Momento<T> {
-  toMomento(): T;
+  toMomento(cache: Cache): T;
   fromMomento(momento: T): void;
 }
 
@@ -80,8 +80,8 @@ export const B: board = {
     }
   },
 
-  toMomento(): string {
-    let str: string = JSON.stringify(this.knownCache.shift()!);
+  toMomento(cache: Cache): string {
+    let str: string = JSON.stringify(cache);
     this.MomentoCache.push(str);
     return str;
   },

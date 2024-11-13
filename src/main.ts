@@ -141,8 +141,15 @@ function generateCache(cell: Cell) {
   B.knownCache.push(localCache);
   B.knownCache.forEach((cache) => {
     if (
-      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] })
-    ) {}
+      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) >
+        260
+    ) {
+      let momentostr = B.toMomento(cache);
+      console.log("to momento: " + momentostr);
+    }
+  });
+  B.MomentoCache.forEach((cacheStr) => {
+    const cache: Cache = JSON.parse(cacheStr);
   });
 }
 
