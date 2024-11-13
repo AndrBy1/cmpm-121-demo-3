@@ -150,6 +150,12 @@ function generateCache(cell: Cell) {
   });
   B.MomentoCache.forEach((cacheStr) => {
     const cache: Cache = JSON.parse(cacheStr);
+    if (
+      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
+        260
+    ) {
+      B.fromMomento(cacheStr);
+    }
   });
 }
 
