@@ -13,6 +13,7 @@ export interface Coin {
 }
 
 export interface Cache {
+  cell: Cell;
   coins: Coin[]; //store the different coins generated from each cache
 }
 
@@ -81,11 +82,10 @@ export const B: board = {
 
   toMomento(): string {
     let str: string = JSON.stringify(this.knownCache.shift()!);
-    console.log("string: ");
-    console.log(str);
     this.MomentoCache.push(str);
     return str;
   },
+
   fromMomento(momento: string): void {
     const cache: Cache = JSON.parse(momento);
     this.knownCache.push(cache);

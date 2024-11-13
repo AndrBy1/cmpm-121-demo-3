@@ -55,8 +55,6 @@ directionButtons.forEach((button, i) => {
     );
     playerMarker.setLatLng(playerLocation);
     genMapCells();
-    console.log("toMomento: ");
-    console.log(B.toMomento());
   });
   document.body.append(button);
 });
@@ -112,6 +110,7 @@ function generateCache(cell: Cell) {
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
   let localCache: Cache = {
+    cell: cell,
     coins: [],
   };
   let coinCount: number;
@@ -138,7 +137,10 @@ function generateCache(cell: Cell) {
     return popupContent;
   });
   cacheMarker.addTo(map);
+
   B.knownCache.push(localCache);
+  B.knownCache.forEach((cache) => {
+  });
 }
 
 function createCoin(cell: Cell, serialNum: number): Coin {
@@ -167,4 +169,8 @@ function popupButtonClick(
   content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
     .length
     .toString();
+}
+
+function distance(cell1: Cell, cell2: Cell) {
+  return Math.pow(cell2.i - cell1.i, 2) + Math.pow(cell2.j - cell1.j, 2);
 }
