@@ -10,8 +10,10 @@ import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
 let randomNum: number;
 let coinPurse: Coin[] = [];
-const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️"];
+const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
 const localSize = 8;
+let playerStart = [369894, -1220627];
+B.playerLocation = playerStart;
 let playerLocation = leaflet.latLng(
   B.calibrCell(B.playerLocation[0], true),
   B.calibrCell(B.playerLocation[1], true),
@@ -32,7 +34,7 @@ playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
 const directionButtons = Array.from(
-  { length: 4 },
+  { length: 6 },
   () => document.createElement("button"),
 );
 
@@ -50,6 +52,10 @@ directionButtons.forEach((button, i) => {
       map.panTo(playerLocation);
     } else if (i == 3) {
       B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
+      map.panTo(playerLocation);
+    } else if (i == 4) {
+      map.panTo(playerLocation);
+    } else if (i == 5) {
       map.panTo(playerLocation);
     }
     playerLocation = leaflet.latLng(
