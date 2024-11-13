@@ -13,6 +13,7 @@ export interface Coin {
 }
 
 export interface Cache {
+  marker: leaflet.Marker<any>;
   cell: Cell;
   coins: Coin[]; //store the different coins generated from each cache
 }

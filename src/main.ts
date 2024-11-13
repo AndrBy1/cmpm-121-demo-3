@@ -89,8 +89,8 @@ function genMapCells() {
 function generateCells(x: number, y: number) {
   let generate = true;
   const newCell: Cell = {
-    i: B.calibrCell(x, false),
-    j: B.calibrCell(y, false),
+    i: Math.floor(B.calibrCell(x, false)),
+    j: Math.floor(B.calibrCell(y, false)),
   };
   B.knownCells.forEach((cell) => { //prevent creating new cells when cell already exists
     if (newCell.i == cell.i && newCell.j == cell.j) {
@@ -102,7 +102,7 @@ function generateCells(x: number, y: number) {
     B.knownCells.push(newCell);
     randomNum = genRandom(1, 101); //but only 10% of them has a cache
     if (randomNum < 5) {
-      console.log("generating cache at " + x + " and " + y);
+      console.log("generating cache at " + newCell.i + " and " + newCell.j);
       generateCache(newCell);
     }
   }
@@ -114,6 +114,7 @@ function generateCache(cell: Cell) {
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
   let localCache: Cache = {
+    marker: cacheMarker,
     cell: cell,
     coins: [],
   };
