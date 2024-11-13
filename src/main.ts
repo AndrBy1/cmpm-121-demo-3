@@ -115,7 +115,7 @@ function generateCache(cell: Cell) {
   };
   let coinCount: number;
   for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
-    localCache.coins.push(createCoin(cell, coinCount));
+    localCache.coins.push({ cell: cell, serial: coinCount });
   }
   cacheMarker.bindPopup(() => {
     const popupContent = document.createElement("div");
@@ -157,10 +157,6 @@ function generateCache(cell: Cell) {
       B.fromMomento(cacheStr);
     }
   });
-}
-
-function createCoin(cell: Cell, serialNum: number): Coin {
-  return { cell: cell, serial: serialNum };
 }
 
 function genRandom(min: number, max: number) {
