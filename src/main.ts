@@ -136,6 +136,7 @@ function generateCache(cell: Cell) {
         260
     ) {
       console.log("cacheStr: " + cacheStr);
+      console.log(cache.cell.i);
       B.fromMomento(cacheStr);
     }
   });
