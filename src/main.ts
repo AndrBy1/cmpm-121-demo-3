@@ -123,27 +123,7 @@ function generateCache(cell: Cell) {
   }
   cachePopup(cacheMarker, popupText, localCache);
   B.knownCache.push(localCache);
-  //use Momento for memory
-  B.knownCache.forEach((cache) => {
-    if (
-      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) >
-        260
-    ) {
-      let momentostr = B.toMomento(cache);
-      console.log("to momento: " + momentostr);
-    }
-  });
-  B.MomentoCache.forEach((cacheStr) => {
-    const cache: Cache = JSON.parse(cacheStr);
-    if (
-      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
-        260
-    ) {
-      console.log("cacheStr: " + cacheStr);
-      console.log(cache.cell.i);
-      B.fromMomento(cacheStr);
-    }
-  });
+  useMomentos();
 }
 
 function genRandom(min: number, max: number) {
@@ -199,4 +179,27 @@ function cachePopup(
     return popupContent;
   });
   marker.addTo(map);
+}
+
+function useMomentos() {
+  B.knownCache.forEach((cache) => {
+    if (
+      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) >
+        260
+    ) {
+      let momentostr = B.toMomento(cache);
+      console.log("to momento: " + momentostr);
+    }
+  });
+  B.MomentoCache.forEach((cacheStr) => {
+    const cache: Cache = JSON.parse(cacheStr);
+    if (
+      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
+        260
+    ) {
+      console.log("cacheStr: " + cacheStr);
+      console.log(cache.cell.i);
+      B.fromMomento(cacheStr);
+    }
+  });
 }
