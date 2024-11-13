@@ -34,8 +34,6 @@ interface board extends Momento<string> {
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
-  cacheToString(cache: Cache): string;
-  StringToCache(str: string): Cache;
 }
 
 export const B: board = {
@@ -81,21 +79,12 @@ export const B: board = {
     }
   },
 
-  cacheToString(cache: Cache): string {
-    return cache.coins
-      .map((coin) =>
-        `Coin: { Serial: ${coin.serial}, Cell: { i: ${coin.cell.i}, j: ${coin.cell.j} } }`
-      )
-      .join("\n");
-  },
-  StringToCache(str: string): Cache {
-    throw new Error("Function not implemented.");
-  },
-
   toMomento(): string {
-    let str: string = this.knownCache.toString();
-    this.MomentoCache.push(this.knownCache.shift.toString());
-    return this.knownCache.shift.toString();
+    let str: string = JSON.stringify(this.knownCache.shift()!);
+    console.log("string: ");
+    console.log(str);
+    this.MomentoCache.push(str);
+    return str;
   },
   fromMomento: function (momento: string): void {
     const coins: Coin[] = [];
