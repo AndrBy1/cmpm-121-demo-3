@@ -117,28 +117,9 @@ function generateCache(cell: Cell) {
   for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
     localCache.coins.push({ cell: cell, serial: coinCount });
   }
-  cacheMarker.bindPopup(() => {
-    const popupContent = document.createElement("div");
-    popupContent.innerHTML = `
-      <div> "${popupText}<span id="count">${localCache.coins.length}</span>\n".</div> 
-      <button id="collect">collect</button>
-      <button id="deposit">deposit</button>`;
-
-    popupContent.querySelector<HTMLButtonElement>("#collect")!
-      .addEventListener("click", () => {
-        popupButtonClick(true, localCache.coins, popupContent);
-      });
-
-    popupContent.querySelector<HTMLButtonElement>("#deposit")!
-      .addEventListener("click", () => {
-        popupButtonClick(false, localCache.coins, popupContent);
-      });
-
-    return popupContent;
-  });
-  cacheMarker.addTo(map);
-
+  cachePopup(cacheMarker, popupText, localCache);
   B.knownCache.push(localCache);
+  //use Momento for memory
   B.knownCache.forEach((cache) => {
     if (
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) >
@@ -154,6 +135,7 @@ function generateCache(cell: Cell) {
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
         260
     ) {
+      console.log("cacheStr: " + cacheStr);
       B.fromMomento(cacheStr);
     }
   });
@@ -185,4 +167,31 @@ function popupButtonClick(
 
 function distance(cell1: Cell, cell2: Cell) {
   return Math.pow(cell2.i - cell1.i, 2) + Math.pow(cell2.j - cell1.j, 2);
+}
+
+function cachePopup(
+  marker: leaflet.Marker<any>,
+  popupText: string,
+  cache: Cache,
+) {
+  marker.bindPopup(() => {
+    const popupContent = document.createElement("div");
+    popupContent.innerHTML = `
+      <div> "${popupText}<span id="count">${cache.coins.length}</span>\n".</div> 
+      <button id="collect">collect</button>
+      <button id="deposit">deposit</button>`;
+
+    popupContent.querySelector<HTMLButtonElement>("#collect")!
+      .addEventListener("click", () => {
+        popupButtonClick(true, cache.coins, popupContent);
+      });
+
+    popupContent.querySelector<HTMLButtonElement>("#deposit")!
+      .addEventListener("click", () => {
+        popupButtonClick(false, cache.coins, popupContent);
+      });
+
+    return popupContent;
+  });
+  marker.addTo(map);
 }
