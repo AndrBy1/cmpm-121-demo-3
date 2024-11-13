@@ -114,10 +114,10 @@ function generateCache(cell: Cell) {
     B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
   );
   let localCache: Cache = {
-    marker: cacheMarker,
     cell: cell,
     coins: [],
   };
+
   let coinCount: number;
   for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
     localCache.coins.push({ cell: cell, serial: coinCount });
