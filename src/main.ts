@@ -52,7 +52,6 @@ directionButtons.forEach((button, i) => {
       B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
       map.panTo(playerLocation);
     }
-    console.log(B.playerLocation);
     playerLocation = leaflet.latLng(
       B.calibrCell(B.playerLocation[0], true),
       B.calibrCell(B.playerLocation[1], true),
@@ -83,7 +82,6 @@ function genMapCells() {
       generateCells(x, y);
     }
   }
-  //console.log(B.knownCells);
 }
 
 function generateCells(x: number, y: number) {
@@ -94,7 +92,6 @@ function generateCells(x: number, y: number) {
   };
   B.knownCells.forEach((cell) => { //prevent creating new cells when cell already exists
     if (newCell.i == cell.i && newCell.j == cell.j) {
-      console.log("found A Cell");
       generate = false;
     }
   });
@@ -102,7 +99,6 @@ function generateCells(x: number, y: number) {
     B.knownCells.push(newCell);
     randomNum = genRandom(1, 101); //but only 10% of them has a cache
     if (randomNum < 5) {
-      console.log("generating cache at " + newCell.i + " and " + newCell.j);
       generateCache(newCell);
     }
   }
@@ -119,7 +115,7 @@ function generateCache(cell: Cell) {
   };
 
   let coinCount: number;
-  for (coinCount = genRandom(0, 6); coinCount > 0; coinCount--) {
+  for (coinCount = genRandom(1, 6); coinCount > 0; coinCount--) {
     localCache.coins.push({ cell: cell, serial: coinCount });
   }
   cachePopup(cacheMarker, popupText, localCache);
@@ -189,7 +185,6 @@ function useMomentos() {
         260
     ) {
       let momentostr = B.toMomento(cache);
-      console.log("to momento: " + momentostr);
     }
   });
   B.MomentoCache.forEach((cacheStr) => {
@@ -198,8 +193,6 @@ function useMomentos() {
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
         260
     ) {
-      console.log("cacheStr: " + cacheStr);
-      console.log(cache.cell.i);
       B.fromMomento(cacheStr);
     }
   });
