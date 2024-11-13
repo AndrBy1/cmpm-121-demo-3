@@ -55,6 +55,8 @@ directionButtons.forEach((button, i) => {
     );
     playerMarker.setLatLng(playerLocation);
     genMapCells();
+    console.log("toMomento: ");
+    console.log(B.toMomento());
   });
   document.body.append(button);
 });
@@ -79,7 +81,7 @@ function genMapCells() {
       generateCells(x, y);
     }
   }
-  console.log(B.knownCells);
+  //console.log(B.knownCells);
 }
 
 function generateCells(x: number, y: number) {

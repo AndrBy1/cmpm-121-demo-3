@@ -13,7 +13,7 @@ export interface Coin {
 }
 
 export interface Cache {
-  coins: Coin[];
+  coins: Coin[]; //store the different coins generated from each cache
 }
 
 interface Momento<T> {
@@ -26,6 +26,7 @@ interface board extends Momento<string> {
   cellDegrees: number;
   playerLocation: number[];
   knownCache: Cache[];
+  MomentoCache: string[];
   knownCells: Cell[];
   setCellDegrees(degree: number): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
@@ -33,6 +34,8 @@ interface board extends Momento<string> {
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
+  cacheToString(cache: Cache): string;
+  StringToCache(str: string): Cache;
 }
 
 export const B: board = {
@@ -40,6 +43,7 @@ export const B: board = {
   cellDegrees: 0.0001,
   knownCells: [],
   knownCache: [],
+  MomentoCache: [],
   playerLocation: [369894, -1220627],
 
   setCellDegrees(degree: number): void {
@@ -77,10 +81,25 @@ export const B: board = {
     }
   },
 
+  cacheToString(cache: Cache): string {
+    return cache.coins
+      .map((coin) =>
+        `Coin: { Serial: ${coin.serial}, Cell: { i: ${coin.cell.i}, j: ${coin.cell.j} } }`
+      )
+      .join("\n");
+  },
+  StringToCache(str: string): Cache {
+    throw new Error("Function not implemented.");
+  },
+
   toMomento(): string {
-    return this.knownCache.toString();
+    let str: string = this.knownCache.toString();
+    this.MomentoCache.push(this.knownCache.shift.toString());
+    return this.knownCache.shift.toString();
   },
   fromMomento: function (momento: string): void {
+    const coins: Coin[] = [];
+    const lines = momento.split("/n");
     throw new Error("Function not implemented.");
   },
 };
