@@ -41,12 +41,16 @@ directionButtons.forEach((button, i) => {
   button.addEventListener("click", () => {
     if (i == 0) {
       B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
+      map.panTo(playerLocation);
     } else if (i == 1) {
       B.playerLocation[0] -= B.calibrCell(B.cellDegrees, false);
+      map.panTo(playerLocation);
     } else if (i == 2) {
       B.playerLocation[1] -= B.calibrCell(B.cellDegrees, false);
+      map.panTo(playerLocation);
     } else if (i == 3) {
       B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
+      map.panTo(playerLocation);
     }
     console.log(B.playerLocation);
     playerLocation = leaflet.latLng(
