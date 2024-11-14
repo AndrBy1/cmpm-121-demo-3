@@ -64,9 +64,11 @@ directionButtons.forEach((button, i) => {
       B.calibrCell(B.playerLocation[0], true),
       B.calibrCell(B.playerLocation[1], true),
     );
+
     playerMarker.setLatLng(playerLocation);
     map.panTo(playerLocation);
     genMapCells();
+    B.playerHistory.push({ i: B.playerLocation[0], j: B.playerLocation[1] });
   });
   document.body.append(button);
 });
