@@ -1,4 +1,5 @@
-//got help from https://leafletjs.com/reference.html
+//got help from https://leafletjs.com/reference.html and
+//https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt
 // deno-lint-ignore-file
 // @deno-types="npm:@types/leaflet@^1.9.14"
 import leaflet from "leaflet";
@@ -62,7 +63,15 @@ directionButtons.forEach((button, i) => {
         "player lat lng: " + B.playerLocation[0] + ", " + B.playerLocation[1],
       );
     } else if (i == 5) {
-      map.panTo(playerLocation);
+      let answer: string = window.prompt(
+        "are you sure you want to erase your game state? \n type yes to proceed",
+      )!;
+      if (answer == "yes") {
+        console.log("reset hit");
+        B.playerLocation = playerStart;
+        B.playerHistory = [];
+        B.playerHistory.push(B.playerLocation);
+      }
     }
   });
   document.body.append(button);

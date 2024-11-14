@@ -23,17 +23,13 @@ interface Momento<T> {
 }
 
 interface board extends Momento<string> {
-  readonly tileVisibilityRadius: number;
   cellDegrees: number;
-  playerLocation: number[];
   knownCache: Cache[];
   MomentoCache: string[];
   knownCells: Cell[];
+  playerLocation: number[];
   playerHistory: number[][];
   setCellDegrees(degree: number): void;
-  getCellForPoint(point: leaflet.LatLng): Cell;
-  getCellBounds(cell: Cell): leaflet.LatLngBounds;
-  getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
   movePlayer(orientation: number, direction: boolean, move?: Cell): void;
@@ -41,7 +37,6 @@ interface board extends Momento<string> {
 }
 
 export const B: board = {
-  tileVisibilityRadius: 0,
   cellDegrees: 0.0001,
   knownCells: [],
   knownCache: [],
@@ -50,25 +45,6 @@ export const B: board = {
   playerHistory: [[369894, -1220627]],
   setCellDegrees(degree: number): void {
     this.cellDegrees = degree;
-  },
-  getCellForPoint(point: leaflet.LatLng): Cell {
-    return this.knownCells[
-      this.knownCells.indexOf({
-        i: point.lat,
-        j: point.lng,
-      })
-    ];
-  },
-
-  getCellBounds(cell: Cell): leaflet.LatLngBounds {
-    // ...
-  },
-
-  getCellsNearPoint(point: leaflet.LatLng): Cell[] {
-    const resultCells: Cell[] = [];
-    const originCell = this.getCellForPoint(point);
-    // ...
-    return resultCells;
   },
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
