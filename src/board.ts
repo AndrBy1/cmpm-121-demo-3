@@ -36,6 +36,7 @@ interface board extends Momento<string> {
   getCellsNearPoint(point: leaflet.LatLng): Cell[];
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
+  movePlayer(orientation: number, direction: boolean, move?: Cell): void;
 }
 
 export const B: board = {
@@ -91,5 +92,21 @@ export const B: board = {
   fromMomento(momento: string): void {
     const cache: Cache = JSON.parse(momento);
     this.knownCache.push(cache);
+  },
+
+  movePlayer(orientation: number, direction: boolean, move?: Cell): void {
+    if (move != undefined) {
+      this.playerLocation = [move.i, move.j];
+    } else if (direction) {
+      this.playerLocation[orientation] += this.calibrCell(
+        this.cellDegrees,
+        false,
+      );
+    } else {
+      this.playerLocation[orientation] -= this.calibrCell(
+        this.cellDegrees,
+        false,
+      );
+    }
   },
 };
