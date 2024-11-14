@@ -73,6 +73,10 @@ map.on("locationfound", function (e) {
   });
 });
 
+const playerLine = leaflet.polyline(B.playerHistory, { color: "red" }).addTo(
+  map,
+);
+
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -218,5 +222,5 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   playerMarker.setLatLng(playerLocation);
   map.panTo(playerLocation);
   genMapCells();
-  B.playerHistory.push({ i: B.playerLocation[0], j: B.playerLocation[1] });
+  B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
 }
