@@ -6,6 +6,7 @@ import leaflet from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import "./style.css";
+import luck from "./luck.ts";
 
 import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
@@ -120,8 +121,8 @@ function generateCells(x: number, y: number) {
   });
   if (generate) {
     B.knownCells.push(newCell);
-    randomNum = genRandom(1, 101); //but only 10% of them has a cache
-    if (randomNum < 5) {
+    randomNum = genRandom(1, 100); //but only 10% of them has a cache
+    if (randomNum < 10) {
       generateCache(newCell);
     }
   }

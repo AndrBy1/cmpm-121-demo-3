@@ -60,7 +60,7 @@ export const B: board = {
   },
 
   toMomento(cache: Cache): string {
-    let str: string = JSON.stringify(cache);
+    const str: string = JSON.stringify(cache);
     this.MomentoCache.push(str);
     this.knownCache.splice(this.knownCache.indexOf(cache), 1);
     return str;
