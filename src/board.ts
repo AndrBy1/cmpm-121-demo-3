@@ -29,7 +29,7 @@ interface board extends Momento<string> {
   knownCache: Cache[];
   MomentoCache: string[];
   knownCells: Cell[];
-  playerHistory: leaflet.latLng[];
+  playerHistory: number[][];
   setCellDegrees(degree: number): void;
   getCellForPoint(point: leaflet.LatLng): Cell;
   getCellBounds(cell: Cell): leaflet.LatLngBounds;
@@ -37,6 +37,7 @@ interface board extends Momento<string> {
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
   movePlayer(orientation: number, direction: boolean, move?: Cell): void;
+  getHistoryLatLng(): leaflet.latlng;
 }
 
 export const B: board = {
@@ -108,5 +109,15 @@ export const B: board = {
         false,
       );
     }
+  },
+  getHistoryLatLng(): leaflet.latlng {
+    let history: number[][] = [];
+    this.playerHistory.forEach((num) => {
+      history.push([
+        this.calibrCell(num[0], true),
+        this.calibrCell(num[1], true),
+      ]);
+    });
+    return history;
   },
 };
