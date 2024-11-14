@@ -43,13 +43,13 @@ directionButtons.forEach((button, i) => {
   button.addEventListener("click", () => {
     if (i == 0) {
       //B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
-      B.movePlayer(0, true);
+      makeMove(0, true);
     } else if (i == 1) {
-      B.movePlayer(0, false);
+      makeMove(0, false);
     } else if (i == 2) {
-      B.movePlayer(1, false);
+      makeMove(1, false);
     } else if (i == 3) {
-      B.movePlayer(1, true);
+      makeMove(1, true);
     } else if (i == 4) {
       map.locate({
         watch: false,
@@ -61,32 +61,16 @@ directionButtons.forEach((button, i) => {
     } else if (i == 5) {
       map.panTo(playerLocation);
     }
-    playerLocation = leaflet.latLng(
-      B.calibrCell(B.playerLocation[0], true),
-      B.calibrCell(B.playerLocation[1], true),
-    );
-
-    playerMarker.setLatLng(playerLocation);
-    map.panTo(playerLocation);
-    genMapCells();
-    B.playerHistory.push({ i: B.playerLocation[0], j: B.playerLocation[1] });
   });
   document.body.append(button);
 });
 
 map.on("locationfound", function (e) {
   console.log("location found!");
-  B.movePlayer(0, false, {
+  makeMove(0, false, {
     i: B.calibrCell(e.latlng.lat, false),
     j: B.calibrCell(e.latlng.lng, false),
   });
-  playerLocation = leaflet.latLng(
-    B.calibrCell(B.playerLocation[0], true),
-    B.calibrCell(B.playerLocation[1], true),
-  );
-  playerMarker.setLatLng(playerLocation);
-  map.panTo(playerLocation);
-  genMapCells();
 });
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -223,4 +207,16 @@ function useMomentos() {
       B.fromMomento(cacheStr);
     }
   });
+}
+
+function makeMove(orientation: number, direction: boolean, move?: Cell) {
+  B.movePlayer(orientation, direction, move);
+  playerLocation = leaflet.latLng(
+    B.calibrCell(B.playerLocation[0], true),
+    B.calibrCell(B.playerLocation[1], true),
+  );
+  playerMarker.setLatLng(playerLocation);
+  map.panTo(playerLocation);
+  genMapCells();
+  B.playerHistory.push({ i: B.playerLocation[0], j: B.playerLocation[1] });
 }
