@@ -43,18 +43,20 @@ directionButtons.forEach((button, i) => {
   button.addEventListener("click", () => {
     if (i == 0) {
       B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
-      map.panTo(playerLocation);
     } else if (i == 1) {
       B.playerLocation[0] -= B.calibrCell(B.cellDegrees, false);
-      map.panTo(playerLocation);
     } else if (i == 2) {
       B.playerLocation[1] -= B.calibrCell(B.cellDegrees, false);
-      map.panTo(playerLocation);
     } else if (i == 3) {
       B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
-      map.panTo(playerLocation);
     } else if (i == 4) {
-      map.panTo(playerLocation);
+      map.locate({
+        watch: false,
+        setView: false,
+      });
+      console.log(
+        "player lat lng: " + B.playerLocation[0] + ", " + B.playerLocation[1],
+      );
     } else if (i == 5) {
       map.panTo(playerLocation);
     }
@@ -63,9 +65,19 @@ directionButtons.forEach((button, i) => {
       B.calibrCell(B.playerLocation[1], true),
     );
     playerMarker.setLatLng(playerLocation);
+    map.panTo(playerLocation);
     genMapCells();
   });
   document.body.append(button);
+});
+
+map.on("locationfound", function (e) {
+  console.log("location found!");
+  B.playerLocation[0] = B.calibrCell(e.latlng.lat, false);
+  B.playerLocation[1] = B.calibrCell(e.latlng.lng, false);
+  playerMarker.setLatLng(playerLocation);
+  map.panTo(playerLocation);
+  genMapCells();
 });
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
