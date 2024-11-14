@@ -75,6 +75,10 @@ map.on("locationfound", function (e) {
   console.log("location found!");
   B.playerLocation[0] = B.calibrCell(e.latlng.lat, false);
   B.playerLocation[1] = B.calibrCell(e.latlng.lng, false);
+  playerLocation = leaflet.latLng(
+    B.calibrCell(B.playerLocation[0], true),
+    B.calibrCell(B.playerLocation[1], true),
+  );
   playerMarker.setLatLng(playerLocation);
   map.panTo(playerLocation);
   genMapCells();
