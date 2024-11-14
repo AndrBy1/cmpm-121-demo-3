@@ -42,13 +42,14 @@ directionButtons.forEach((button, i) => {
   button.innerHTML = `${directions[i]}`;
   button.addEventListener("click", () => {
     if (i == 0) {
-      B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
+      //B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
+      B.movePlayer(0, true);
     } else if (i == 1) {
-      B.playerLocation[0] -= B.calibrCell(B.cellDegrees, false);
+      B.movePlayer(0, false);
     } else if (i == 2) {
-      B.playerLocation[1] -= B.calibrCell(B.cellDegrees, false);
+      B.movePlayer(1, false);
     } else if (i == 3) {
-      B.playerLocation[1] += B.calibrCell(B.cellDegrees, false);
+      B.movePlayer(1, true);
     } else if (i == 4) {
       map.locate({
         watch: false,
@@ -75,8 +76,10 @@ directionButtons.forEach((button, i) => {
 
 map.on("locationfound", function (e) {
   console.log("location found!");
-  B.playerLocation[0] = B.calibrCell(e.latlng.lat, false);
-  B.playerLocation[1] = B.calibrCell(e.latlng.lng, false);
+  B.movePlayer(0, false, {
+    i: B.calibrCell(e.latlng.lat, false),
+    j: B.calibrCell(e.latlng.lng, false),
+  });
   playerLocation = leaflet.latLng(
     B.calibrCell(B.playerLocation[0], true),
     B.calibrCell(B.playerLocation[1], true),
