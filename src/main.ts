@@ -72,6 +72,8 @@ directionButtons.forEach((button, i) => {
         B.playerLocation = playerStart;
         B.playerHistory = [];
         B.playerHistory.push(B.playerLocation);
+        playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" })
+          .addTo(map);
       }
     }
   });
