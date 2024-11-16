@@ -71,6 +71,7 @@ directionButtons.forEach((button, i) => {
         console.log("reset hit");
         map.removeLayer(playerLine);
         B.playerHistory = [];
+        console.log("start: " + playerStart[0] + playerStart[1]);
         makeMove(0, false, {
           i: playerStart[0],
           j: playerStart[1],
@@ -79,12 +80,25 @@ directionButtons.forEach((button, i) => {
           B.fromMomento(data);
         });
         coinPurse.forEach((coin) => {
+          let cacheReturn = false;
           B.knownCache.forEach((cache) => {
             if (coin.cell == cache.cell) {
               cache.coins.push(coin);
             }
+            if (!cacheReturn) {
+              B.knownCache.forEach((cache2) => {
+                cache2.coins.forEach((coin2) => {
+                  if (coin2.cell == cache.cell) {
+                    cache.coins.push(coin2);
+                    cache2.coins.splice(cache2.coins.indexOf(coin2), 1);
+                  }
+                });
+              });
+              cacheReturn = true;
+            }
           });
         });
+
         coinPurse = [];
         coinDisplay.innerHTML = "Coins: " + coinPurse.length;
       }
