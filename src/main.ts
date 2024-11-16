@@ -14,7 +14,7 @@ let randomNum: number;
 let coinPurse: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
 const localSize = 8;
-let playerStart = [369894, -1220627];
+const playerStart = [369894, -1220627];
 B.playerLocation = playerStart;
 let playerLocation = leaflet.latLng(
   B.calibrCell(B.playerLocation[0], true),
@@ -65,15 +65,28 @@ directionButtons.forEach((button, i) => {
       );
     } else if (i == 5) {
       let answer: string = window.prompt(
-        "are you sure you want to erase your game state? \n type yes to proceed",
+        "are you sure you want to erase your game state? \n Type yes to proceed",
       )!;
       if (answer == "yes") {
         console.log("reset hit");
-        B.playerLocation = playerStart;
+        map.removeLayer(playerLine);
         B.playerHistory = [];
-        B.playerHistory.push(B.playerLocation);
-        playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" })
-          .addTo(map);
+        makeMove(0, false, {
+          i: playerStart[0],
+          j: playerStart[1],
+        });
+        B.MomentoCache.forEach((data) => {
+          B.fromMomento(data);
+        });
+        coinPurse.forEach((coin) => {
+          B.knownCache.forEach((cache) => {
+            if (coin.cell == cache.cell) {
+              cache.coins.push(coin);
+            }
+          });
+        });
+        coinPurse = [];
+        coinDisplay.innerHTML = "Coins: " + coinPurse.length;
       }
     }
   });
