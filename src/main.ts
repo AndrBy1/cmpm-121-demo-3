@@ -11,7 +11,7 @@ import luck from "./luck.ts";
 import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
 let randomNum: number;
-let coinPurse: Coin[] = [];
+let coinBag: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
 const localSize = 8;
 const playerStart = [369894, -1220627];
@@ -24,7 +24,7 @@ const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
-coinDisplay.innerHTML = "Coins: " + coinPurse.length;
+coinDisplay.innerHTML = "Coins: " + coinBag.length;
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -79,28 +79,29 @@ directionButtons.forEach((button, i) => {
         B.MomentoCache.forEach((data) => {
           B.fromMomento(data);
         });
-        coinPurse.forEach((coin) => {
-          let cacheReturn = false;
+        coinBag.forEach((coin) => { //returns coins from purse to original cache
           B.knownCache.forEach((cache) => {
             if (coin.cell == cache.cell) {
               cache.coins.push(coin);
             }
-            if (!cacheReturn) {
+          });
+        });
+        B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
+          cache.coins.forEach((coin) => {
+            if (coin.cell != cache.cell) {
+              console.log(JSON.stringify(coin));
               B.knownCache.forEach((cache2) => {
-                cache2.coins.forEach((coin2) => {
-                  if (coin2.cell == cache.cell) {
-                    cache.coins.push(coin2);
-                    cache2.coins.splice(cache2.coins.indexOf(coin2), 1);
-                  }
-                });
+                if (coin.cell == cache2.cell) {
+                  //console.log(JSON.stringify(coin));
+                  cache2.coins.push(coin);
+                  cache.coins.splice(cache.coins.indexOf(coin), 1);
+                }
               });
-              cacheReturn = true;
             }
           });
         });
-
-        coinPurse = [];
-        coinDisplay.innerHTML = "Coins: " + coinPurse.length;
+        coinBag = [];
+        coinDisplay.innerHTML = "Coins: " + coinBag.length;
       }
     }
   });
@@ -187,14 +188,17 @@ function popupButtonClick(
 ) {
   if (collect && localStash.length > 0) { //if the collect button clicked
     if (localStash.length > 0) {
-      coinPurse.push(localStash.pop()!);
+      coinBag.push(localStash.pop()!);
+      console.log(
+        "collected coin: " + JSON.stringify(coinBag[coinBag.length - 1]),
+      );
     }
-  } else if (!collect && coinPurse.length > 0) { //if the deposit button clicked
-    if (coinPurse.length > 0) {
-      localStash.push(coinPurse.pop()!);
+  } else if (!collect && coinBag.length > 0) { //if the deposit button clicked
+    if (coinBag.length > 0) {
+      localStash.push(coinBag.pop()!);
     }
   }
-  coinDisplay.innerHTML = "Coins: " + coinPurse.length;
+  coinDisplay.innerHTML = "Coins: " + coinBag.length;
   content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
     .length
     .toString();
