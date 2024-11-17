@@ -87,18 +87,25 @@ directionButtons.forEach((button, i) => {
           });
         });
         B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
-          cache.coins.forEach((coin) => {
-            if (coin.cell != cache.cell) {
-              console.log(JSON.stringify(coin));
+          for (let i = 0; i < cache.coins.length; i++) {
+            if (
+              (cache.coins[i] != undefined) &&
+              (cache.coins[i].cell != cache.cell)
+            ) {
+              console.log(JSON.stringify(cache.coins[i]));
               B.knownCache.forEach((cache2) => {
-                if (coin.cell == cache2.cell) {
+                if (
+                  (cache.coins[i] != undefined) &&
+                  (cache.coins[i].cell == cache2.cell)
+                ) {
                   //console.log(JSON.stringify(coin));
-                  cache2.coins.push(coin);
-                  cache.coins.splice(cache.coins.indexOf(coin), 1);
+                  cache2.coins.push(cache.coins[i]);
+                  cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
                 }
               });
+              i--;
             }
-          });
+          }
         });
         coinBag = [];
         coinDisplay.innerHTML = "Coins: " + coinBag.length;
