@@ -14,8 +14,9 @@ let randomNum: number;
 let coinBag: Coin[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
 const localSize = 8;
-const playerStart = [369894, -1220627];
-B.playerLocation = playerStart;
+const startLat = 369894;
+const startLng = -1220627;
+B.playerLocation = [startLat, startLng];
 let playerLocation = leaflet.latLng(
   B.calibrCell(B.playerLocation[0], true),
   B.calibrCell(B.playerLocation[1], true),
@@ -71,13 +72,22 @@ directionButtons.forEach((button, i) => {
         console.log("reset hit");
         map.removeLayer(playerLine);
         B.playerHistory = [];
-        console.log("start: " + playerStart[0] + playerStart[1]);
-        makeMove(0, false, {
-          i: playerStart[0],
-          j: playerStart[1],
-        });
+
         B.MomentoCache.forEach((data) => {
           B.fromMomento(data);
+        });
+
+        B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
+          for (let i = 0; i < cache.coins.length; i++) {
+            if (
+              (cache.coins[i] != undefined) &&
+              (cache.coins[i].cell != cache.cell)
+            ) {
+              coinBag.push(cache.coins[i]);
+              cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
+              i--;
+            }
+          }
         });
         coinBag.forEach((coin) => { //returns coins from purse to original cache
           B.knownCache.forEach((cache) => {
@@ -86,28 +96,12 @@ directionButtons.forEach((button, i) => {
             }
           });
         });
-        B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
-          for (let i = 0; i < cache.coins.length; i++) {
-            if (
-              (cache.coins[i] != undefined) &&
-              (cache.coins[i].cell != cache.cell)
-            ) {
-              console.log(JSON.stringify(cache.coins[i]));
-              B.knownCache.forEach((cache2) => {
-                if (
-                  (cache.coins[i] != undefined) &&
-                  (cache.coins[i].cell == cache2.cell)
-                ) {
-                  //console.log(JSON.stringify(coin));
-                  cache2.coins.push(cache.coins[i]);
-                  cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
-                }
-              });
-              i--;
-            }
-          }
-        });
         coinBag = [];
+        console.log("start: " + startLat + ", " + startLng);
+        makeMove(0, false, {
+          i: startLat,
+          j: startLng,
+        });
         coinDisplay.innerHTML = "Coins: " + coinBag.length;
       }
     }
@@ -116,7 +110,6 @@ directionButtons.forEach((button, i) => {
 });
 
 map.on("locationfound", function (e) {
-  console.log("location found!");
   makeMove(0, false, {
     i: B.calibrCell(e.latlng.lat, false),
     j: B.calibrCell(e.latlng.lng, false),
@@ -274,4 +267,5 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
   playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" })
     .addTo(map);
+  console.log("Player pos: " + playerLocation);
 }
