@@ -12,6 +12,7 @@ import { B, type Cache, type Cell, type Coin } from "./board.ts";
 
 let randomNum: number;
 let coinBag: Coin[] = [];
+let lines: leaflet.Polyline<any, any>[] = [];
 const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
 const localSize = 8;
 const startLat = 369894;
@@ -32,8 +33,9 @@ const map = leaflet.map("map", {
   zoom: 19,
 });
 
-let playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" })
-  .addTo(map);
+let playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" });
+lines.push(playerLine);
+playerLine.addTo(map);
 
 let playerMarker = leaflet.marker(playerLocation);
 playerMarker.bindPopup("Player Location").openPopup();
@@ -72,11 +74,12 @@ directionButtons.forEach((button, i) => {
         console.log("reset hit");
         map.removeLayer(playerLine);
         B.playerHistory = [];
-
+        lines.forEach((line) => {
+          line.removeFrom(map);
+        });
         B.MomentoCache.forEach((data) => {
           B.fromMomento(data);
         });
-
         B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
           for (let i = 0; i < cache.coins.length; i++) {
             if (
@@ -265,7 +268,8 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   map.panTo(playerLocation);
   genMapCells();
   B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
-  playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" })
-    .addTo(map);
+  playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
+  lines.push(playerLine);
+  playerLine.addTo(map);
   console.log("Player pos: " + playerLocation);
 }
