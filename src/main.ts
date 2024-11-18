@@ -13,7 +13,16 @@ import { B, type Cache, type Cell, type Coin } from "./board.ts";
 let randomNum: number;
 let coinBag: Coin[] = [];
 let lines: leaflet.Polyline<any, any>[] = [];
-const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮", "save game"];
+const directions: string[] = [
+  "⬆️",
+  "⬇️",
+  "⬅️",
+  "➡️",
+  "🌐",
+  "🚮",
+  "restore save",
+  "save game",
+];
 const localSize = 8;
 const startLat = 369894;
 const startLng = -1220627;
@@ -74,7 +83,11 @@ directionButtons.forEach((button, i) => {
         console.log("reset hit");
         resetButton();
       }
-    } else if (i == 6) {}
+    } else if (i == 6) {
+      //localStorage.setItem("gameState", B);
+    } else if (i == 7) {
+      localStorage.getItem("gameState");
+    }
   });
   document.body.append(button);
 });
@@ -144,7 +157,6 @@ function generateCache(cell: Cell) {
   }
   cachePopup(cacheMarker, popupText, localCache);
   B.knownCache.push(localCache);
-  useMomentos();
 }
 
 function genRandom(min: number, max: number) {
@@ -205,24 +217,35 @@ function cachePopup(
   marker.addTo(map);
 }
 
-function useMomentos() {
-  B.knownCache.forEach((cache) => {
+function distMomentos() {
+  for (let c = 0; c < B.knownCache.length; c++) {
     if (
-      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) >
+      distance(B.knownCache[c].cell, {
+        i: B.playerLocation[0],
+        j: B.playerLocation[1],
+      }) >
         260
     ) {
-      let momentostr = B.toMomento(cache);
+      console.log("momentos used: " + JSON.stringify(B.knownCache[c]));
+      let momentostr = B.toMomento(B.knownCache[c]);
+      c--;
     }
-  });
-  B.MomentoCache.forEach((cacheStr) => {
-    const cache: Cache = JSON.parse(cacheStr);
+  }
+  console.log("momento cache: " + B.MomentoCache);
+  console.log("momento length: " + B.MomentoCache.length);
+  for (let s = 0; s < B.MomentoCache.length; s++) {
+    const cache: Cache = JSON.parse(B.MomentoCache[s]);
     if (
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
         260
     ) {
-      B.fromMomento(cacheStr);
+      console.log("s: " + s + "momentos unused: " + (B.MomentoCache[s]));
+
+      B.fromMomento(B.MomentoCache[s]);
+      s--;
     }
-  });
+  }
+  console.log("momento cache: " + B.MomentoCache);
 }
 
 function makeMove(orientation: number, direction: boolean, move?: Cell) {
@@ -238,6 +261,7 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
   lines.push(playerLine);
   playerLine.addTo(map);
+  distMomentos();
   console.log("Player pos: " + playerLocation);
 }
 

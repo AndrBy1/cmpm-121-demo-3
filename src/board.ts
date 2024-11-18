@@ -18,7 +18,7 @@ export interface Cache {
 }
 
 interface Momento<T> {
-  toMomento(cache: Cache): T;
+  toMomento(cache: Cache, cell?: Cell): T;
   fromMomento(momento: T): void;
 }
 
@@ -59,7 +59,7 @@ export const B: board = {
     }
   },
 
-  toMomento(cache: Cache): string {
+  toMomento(cache: Cache, cell?: Cell): string {
     const str: string = JSON.stringify(cache);
     this.MomentoCache.push(str);
     this.knownCache.splice(this.knownCache.indexOf(cache), 1);
@@ -68,6 +68,7 @@ export const B: board = {
 
   fromMomento(momento: string): void {
     const cache: Cache = JSON.parse(momento);
+    this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
     this.knownCache.push(cache);
   },
 
