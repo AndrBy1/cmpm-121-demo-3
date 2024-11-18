@@ -72,40 +72,7 @@ directionButtons.forEach((button, i) => {
       )!;
       if (answer == "yes") {
         console.log("reset hit");
-        map.removeLayer(playerLine);
-        B.playerHistory = [];
-        lines.forEach((line) => {
-          line.removeFrom(map);
-        });
-        B.MomentoCache.forEach((data) => {
-          B.fromMomento(data);
-        });
-        B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
-          for (let i = 0; i < cache.coins.length; i++) {
-            if (
-              (cache.coins[i] != undefined) &&
-              (cache.coins[i].cell != cache.cell)
-            ) {
-              coinBag.push(cache.coins[i]);
-              cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
-              i--;
-            }
-          }
-        });
-        coinBag.forEach((coin) => { //returns coins from purse to original cache
-          B.knownCache.forEach((cache) => {
-            if (coin.cell == cache.cell) {
-              cache.coins.push(coin);
-            }
-          });
-        });
-        coinBag = [];
-        console.log("start: " + startLat + ", " + startLng);
-        makeMove(0, false, {
-          i: startLat,
-          j: startLng,
-        });
-        coinDisplay.innerHTML = "Coins: " + coinBag.length;
+        resetButton();
       }
     }
   });
@@ -272,4 +239,40 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   lines.push(playerLine);
   playerLine.addTo(map);
   console.log("Player pos: " + playerLocation);
+}
+
+function resetButton() {
+  B.playerHistory = [];
+  lines.forEach((line) => {
+    line.removeFrom(map);
+  });
+  B.MomentoCache.forEach((data) => {
+    B.fromMomento(data);
+  });
+  B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
+    for (let i = 0; i < cache.coins.length; i++) {
+      if (
+        (cache.coins[i] != undefined) &&
+        (cache.coins[i].cell != cache.cell)
+      ) {
+        coinBag.push(cache.coins[i]);
+        cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
+        i--;
+      }
+    }
+  });
+  coinBag.forEach((coin) => { //returns coins from purse to original cache
+    B.knownCache.forEach((cache) => {
+      if (coin.cell == cache.cell) {
+        cache.coins.push(coin);
+      }
+    });
+  });
+  coinBag = [];
+  console.log("start: " + startLat + ", " + startLng);
+  makeMove(0, false, {
+    i: startLat,
+    j: startLng,
+  });
+  coinDisplay.innerHTML = "Coins: " + coinBag.length;
 }
