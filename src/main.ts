@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import "./style.css";
 import luck from "./luck.ts";
 
-import { B, type Cache, type Cell, type Coin } from "./board.ts";
+import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 
 let randomNum: number;
 let coinBag: Coin[] = [];
@@ -51,7 +51,7 @@ playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
 const directionButtons = Array.from(
-  { length: 7 },
+  { length: 8 },
   () => document.createElement("button"),
 );
 
@@ -86,7 +86,7 @@ directionButtons.forEach((button, i) => {
     } else if (i == 6) {
       localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
-      B.fromMomento(localStorage.getItem("gameState")!, true);
+      returnBoard(localStorage.getItem("gameState")!);
     }
   });
   document.body.append(button);
@@ -241,7 +241,7 @@ function distMomentos() {
     ) {
       console.log("s: " + s + "momentos unused: " + (B.MomentoCache[s]));
 
-      B.fromMomento(B.MomentoCache[s], false);
+      B.fromMomento(B.MomentoCache[s]);
       s--;
     }
   }
@@ -271,7 +271,7 @@ function resetButton() {
     line.removeFrom(map);
   });
   B.MomentoCache.forEach((data) => {
-    B.fromMomento(data, false);
+    B.fromMomento(data);
   });
   distMomentos();
   B.knownCache.forEach((cache) => { //returns coins from other cache to original cache

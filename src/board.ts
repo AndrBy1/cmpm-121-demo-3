@@ -19,7 +19,7 @@ export interface Cache {
 
 interface Momento<T> {
   toMomento(cache: Cache, board?: board): T;
-  fromMomento(momento: T, isBoard: boolean): void;
+  fromMomento(momento: T): void;
 }
 
 interface board extends Momento<string> {
@@ -71,14 +71,10 @@ export let B: board = {
     return str;
   },
 
-  fromMomento(momento: string, isBoard: boolean): void {
-    if (isBoard) {
-      const B: board = JSON.parse(momento);
-    } else {
-      const cache: Cache = JSON.parse(momento);
-      this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
-      this.knownCache.push(cache);
-    }
+  fromMomento(momento: string): void {
+    const cache: Cache = JSON.parse(momento);
+    this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
+    this.knownCache.push(cache);
   },
 
   movePlayer(orientation: number, direction: boolean, move?: Cell): void {
@@ -107,3 +103,7 @@ export let B: board = {
     return history;
   },
 };
+
+export function returnBoard(str: string): void {
+  B = JSON.parse(str);
+}
