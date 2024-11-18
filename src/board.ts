@@ -18,8 +18,8 @@ export interface Cache {
 }
 
 interface Momento<T> {
-  toMomento(cache: Cache, cell?: Cell): T;
-  fromMomento(momento: T): void;
+  toMomento(cache: Cache, board?: board): T;
+  fromMomento(momento: T, isBoard: boolean): void;
 }
 
 interface board extends Momento<string> {
@@ -36,7 +36,7 @@ interface board extends Momento<string> {
   getHistoryLatLng(): leaflet.latlng;
 }
 
-export const B: board = {
+export let B: board = {
   cellDegrees: 0.0001,
   knownCells: [],
   knownCache: [],
@@ -59,17 +59,26 @@ export const B: board = {
     }
   },
 
-  toMomento(cache: Cache, cell?: Cell): string {
-    const str: string = JSON.stringify(cache);
-    this.MomentoCache.push(str);
-    this.knownCache.splice(this.knownCache.indexOf(cache), 1);
+  toMomento(cache: Cache, board?: board): string {
+    let str: string;
+    if (board != undefined) {
+      str = JSON.stringify(board);
+    } else {
+      str = JSON.stringify(cache);
+      this.MomentoCache.push(str);
+      this.knownCache.splice(this.knownCache.indexOf(cache), 1);
+    }
     return str;
   },
 
-  fromMomento(momento: string): void {
-    const cache: Cache = JSON.parse(momento);
-    this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
-    this.knownCache.push(cache);
+  fromMomento(momento: string, isBoard: boolean): void {
+    if (isBoard) {
+      const B: board = JSON.parse(momento);
+    } else {
+      const cache: Cache = JSON.parse(momento);
+      this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
+      this.knownCache.push(cache);
+    }
   },
 
   movePlayer(orientation: number, direction: boolean, move?: Cell): void {

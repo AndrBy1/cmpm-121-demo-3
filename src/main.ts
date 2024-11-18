@@ -20,8 +20,8 @@ const directions: string[] = [
   "➡️",
   "🌐",
   "🚮",
-  "restore save",
   "save game",
+  "restore save",
 ];
 const localSize = 8;
 const startLat = 369894;
@@ -84,9 +84,9 @@ directionButtons.forEach((button, i) => {
         resetButton();
       }
     } else if (i == 6) {
-      //localStorage.setItem("gameState", B);
+      localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
-      localStorage.getItem("gameState");
+      B.fromMomento(localStorage.getItem("gameState")!, true);
     }
   });
   document.body.append(button);
@@ -241,7 +241,7 @@ function distMomentos() {
     ) {
       console.log("s: " + s + "momentos unused: " + (B.MomentoCache[s]));
 
-      B.fromMomento(B.MomentoCache[s]);
+      B.fromMomento(B.MomentoCache[s], false);
       s--;
     }
   }
@@ -271,8 +271,9 @@ function resetButton() {
     line.removeFrom(map);
   });
   B.MomentoCache.forEach((data) => {
-    B.fromMomento(data);
+    B.fromMomento(data, false);
   });
+  distMomentos();
   B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
     for (let i = 0; i < cache.coins.length; i++) {
       if (
