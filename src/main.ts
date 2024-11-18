@@ -13,7 +13,7 @@ import { B, type Cache, type Cell, type Coin } from "./board.ts";
 let randomNum: number;
 let coinBag: Coin[] = [];
 let lines: leaflet.Polyline<any, any>[] = [];
-const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮"];
+const directions: string[] = ["⬆️", "⬇️", "⬅️", "➡️", "🌐", "🚮", "save game"];
 const localSize = 8;
 const startLat = 369894;
 const startLng = -1220627;
@@ -42,7 +42,7 @@ playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
 const directionButtons = Array.from(
-  { length: 6 },
+  { length: 7 },
   () => document.createElement("button"),
 );
 
@@ -74,7 +74,7 @@ directionButtons.forEach((button, i) => {
         console.log("reset hit");
         resetButton();
       }
-    }
+    } else if (i == 6) {}
   });
   document.body.append(button);
 });
