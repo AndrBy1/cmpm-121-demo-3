@@ -72,15 +72,11 @@ directionButtons.forEach((button, i) => {
         watch: false,
         setView: false,
       });
-      console.log(
-        "player lat lng: " + B.playerLocation[0] + ", " + B.playerLocation[1],
-      );
     } else if (i == 5) {
       let answer: string = window.prompt(
         "are you sure you want to erase your game state? \n Type yes to proceed",
       )!;
       if (answer == "yes") {
-        console.log("reset hit");
         resetButton();
       }
     } else if (i == 6) {
