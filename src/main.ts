@@ -77,11 +77,12 @@ directionButtons.forEach((button, i) => {
         "are you sure you want to erase your game state? \n Type yes to proceed",
       )!;
       if (answer == "yes") {
-        resetButton();
+        resetFunc();
       }
     } else if (i == 6) {
       localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
+      resetFunc();
       returnBoard(localStorage.getItem("gameState")!);
     }
   });
@@ -261,7 +262,7 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   console.log("Player pos: " + playerLocation);
 }
 
-function resetButton() {
+function resetFunc() {
   B.playerHistory = [];
   lines.forEach((line) => {
     line.removeFrom(map);

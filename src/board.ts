@@ -105,5 +105,14 @@ export let B: board = {
 };
 
 export function returnBoard(str: string): void {
-  B = JSON.parse(str);
+  let newB = JSON.parse(str);
+  B.movePlayer(0, false, {
+    i: newB.playerLocation[0],
+    j: newB.playerLocation[1],
+  });
+  B.cellDegrees = newB.cellDegrees;
+  B.knownCache = newB.knownCache;
+  B.MomentoCache = newB.MomentoCache;
+  B.knownCells = newB.knownCells;
+  B.playerHistory = newB.playerHistory;
 }
