@@ -85,6 +85,9 @@ directionButtons.forEach((button, i) => {
     } else if (i == 7) {
       removeMarkings();
       returnBoard(localStorage.getItem("gameState")!);
+      playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
+      lines.push(playerLine);
+      playerLine.addTo(map);
       B.knownCache.forEach((cache) => {
         const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
           ".\n Coin value is ";
