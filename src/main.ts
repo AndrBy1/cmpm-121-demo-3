@@ -11,8 +11,9 @@ import luck from "./luck.ts";
 import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 
 let randomNum: number;
-let coinBag: Coin[] = [];
+//let B.coinBag: Coin[] = [];
 let lines: leaflet.Polyline<any, any>[] = [];
+let cMarkers: leaflet.Marker<any>[] = [];
 const directions: string[] = [
   "⬆️",
   "⬇️",
@@ -35,7 +36,7 @@ const cellDegrees = 0.0001;
 B.setCellDegrees(cellDegrees);
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
-coinDisplay.innerHTML = "Coins: " + coinBag.length;
+coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
 
 const map = leaflet.map("map", {
   center: playerLocation,
@@ -82,8 +83,17 @@ directionButtons.forEach((button, i) => {
     } else if (i == 6) {
       localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
-      resetFunc();
+      removeMarkings();
       returnBoard(localStorage.getItem("gameState")!);
+      B.knownCache.forEach((cache) => {
+        const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
+          ".\n Coin value is ";
+        const cacheMarker = leaflet.marker(
+          B.getLatLngOfCell(cache.cell),
+        );
+        cachePopup(cacheMarker, popupText, cache);
+        cMarkers.push(cacheMarker);
+      });
     }
   });
   document.body.append(button);
@@ -153,34 +163,12 @@ function generateCache(cell: Cell) {
     localCache.coins.push({ cell: cell, serial: coinCount });
   }
   cachePopup(cacheMarker, popupText, localCache);
+  cMarkers.push(cacheMarker);
   B.knownCache.push(localCache);
 }
 
 function genRandom(min: number, max: number) {
   return Math.floor((Math.random() * (max - min + 1)) + min);
-}
-
-function popupButtonClick(
-  collect: boolean,
-  localStash: Coin[],
-  content: HTMLDivElement,
-) {
-  if (collect && localStash.length > 0) { //if the collect button clicked
-    if (localStash.length > 0) {
-      coinBag.push(localStash.pop()!);
-      console.log(
-        "collected coin: " + JSON.stringify(coinBag[coinBag.length - 1]),
-      );
-    }
-  } else if (!collect && coinBag.length > 0) { //if the deposit button clicked
-    if (coinBag.length > 0) {
-      localStash.push(coinBag.pop()!);
-    }
-  }
-  coinDisplay.innerHTML = "Coins: " + coinBag.length;
-  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
-    .length
-    .toString();
 }
 
 function distance(cell1: Cell, cell2: Cell) {
@@ -212,6 +200,29 @@ function cachePopup(
     return popupContent;
   });
   marker.addTo(map);
+}
+
+function popupButtonClick(
+  collect: boolean,
+  localStash: Coin[],
+  content: HTMLDivElement,
+) {
+  if (collect && localStash.length > 0) { //if the collect button clicked
+    if (localStash.length > 0) {
+      B.coinBag.push(localStash.pop()!);
+      console.log(
+        "collected coin: " + JSON.stringify(B.coinBag[B.coinBag.length - 1]),
+      );
+    }
+  } else if (!collect && B.coinBag.length > 0) { //if the deposit button clicked
+    if (B.coinBag.length > 0) {
+      localStash.push(B.coinBag.pop()!);
+    }
+  }
+  coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
+  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
+    .length
+    .toString();
 }
 
 function distMomentos() {
@@ -262,11 +273,20 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   console.log("Player pos: " + playerLocation);
 }
 
-function resetFunc() {
-  B.playerHistory = [];
+function removeMarkings() {
   lines.forEach((line) => {
     line.removeFrom(map);
   });
+  lines = [];
+  cMarkers.forEach((mark) => {
+    mark.removeFrom(map);
+  });
+  cMarkers = [];
+}
+
+function resetFunc() {
+  B.playerHistory = [];
+  removeMarkings();
   B.MomentoCache.forEach((data) => {
     B.fromMomento(data);
   });
@@ -277,24 +297,24 @@ function resetFunc() {
         (cache.coins[i] != undefined) &&
         (cache.coins[i].cell != cache.cell)
       ) {
-        coinBag.push(cache.coins[i]);
+        B.coinBag.push(cache.coins[i]);
         cache.coins.splice(cache.coins.indexOf(cache.coins[i]), 1);
         i--;
       }
     }
   });
-  coinBag.forEach((coin) => { //returns coins from purse to original cache
+  B.coinBag.forEach((coin) => { //returns coins from purse to original cache
     B.knownCache.forEach((cache) => {
       if (coin.cell == cache.cell) {
         cache.coins.push(coin);
       }
     });
   });
-  coinBag = [];
+  B.coinBag = [];
   console.log("start: " + startLat + ", " + startLng);
   makeMove(0, false, {
     i: startLat,
     j: startLng,
   });
-  coinDisplay.innerHTML = "Coins: " + coinBag.length;
+  coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
 }
