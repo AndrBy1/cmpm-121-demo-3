@@ -2,19 +2,16 @@
 //https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt
 // deno-lint-ignore-file
 // @deno-types="npm:@types/leaflet@^1.9.14"
-import leaflet from "leaflet";
 
+import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
-import luck from "./luck.ts";
-
 import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 
 let randomNum: number;
-//let B.coinBag: Coin[] = [];
 let lines: leaflet.Polyline<any, any>[] = [];
 let cMarkers: leaflet.Marker<any>[] = [];
-const directions: string[] = [
+const buttonText: string[] = [
   "⬆️",
   "⬇️",
   "⬅️",
@@ -51,16 +48,15 @@ let playerMarker = leaflet.marker(playerLocation);
 playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
-const directionButtons = Array.from(
+const interactButtons = Array.from(
   { length: 8 },
   () => document.createElement("button"),
 );
 
-directionButtons.forEach((button, i) => {
-  button.innerHTML = `${directions[i]}`;
+interactButtons.forEach((button, i) => {
+  button.innerHTML = `${buttonText[i]}`;
   button.addEventListener("click", () => {
     if (i == 0) {
-      //B.playerLocation[0] += B.calibrCell(B.cellDegrees, false);
       makeMove(0, true);
     } else if (i == 1) {
       makeMove(0, false);
@@ -85,6 +81,7 @@ directionButtons.forEach((button, i) => {
     } else if (i == 7) {
       removeMarkings(true, true);
       returnBoard(localStorage.getItem("gameState")!);
+      coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
       makeMarkings();
       B.knownCache.forEach((cache) => {
         const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
@@ -135,14 +132,14 @@ function generateCells(x: number, y: number) {
     i: Math.floor(B.calibrCell(x, false)),
     j: Math.floor(B.calibrCell(y, false)),
   };
-  B.knownCells.forEach((cell) => { //prevent creating new cells when cell already exists
+  B.knownCells.forEach((cell) => {
     if (newCell.i == cell.i && newCell.j == cell.j) {
       generate = false;
     }
   });
   if (generate) {
     B.knownCells.push(newCell);
-    randomNum = genRandom(1, 100); //but only 10% of them has a cache
+    randomNum = genRandom(1, 100);
     if (randomNum < 10) {
       generateCache(newCell);
     }
@@ -208,14 +205,11 @@ function popupButtonClick(
   localStash: Coin[],
   content: HTMLDivElement,
 ) {
-  if (collect && localStash.length > 0) { //if the collect button clicked
+  if (collect && localStash.length > 0) {
     if (localStash.length > 0) {
       B.coinBag.push(localStash.pop()!);
-      console.log(
-        "collected coin: " + JSON.stringify(B.coinBag[B.coinBag.length - 1]),
-      );
     }
-  } else if (!collect && B.coinBag.length > 0) { //if the deposit button clicked
+  } else if (!collect && B.coinBag.length > 0) {
     if (B.coinBag.length > 0) {
       localStash.push(B.coinBag.pop()!);
     }
@@ -235,26 +229,20 @@ function distMomentos() {
       }) >
         260
     ) {
-      console.log("momentos used: " + JSON.stringify(B.knownCache[c]));
       let momentostr = B.toMomento(B.knownCache[c]);
       c--;
     }
   }
-  console.log("momento cache: " + B.MomentoCache);
-  console.log("momento length: " + B.MomentoCache.length);
   for (let s = 0; s < B.MomentoCache.length; s++) {
     const cache: Cache = JSON.parse(B.MomentoCache[s]);
     if (
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
         260
     ) {
-      console.log("s: " + s + "momentos unused: " + (B.MomentoCache[s]));
-
       B.fromMomento(B.MomentoCache[s]);
       s--;
     }
   }
-  console.log("momento cache: " + B.MomentoCache);
 }
 
 function makeMove(orientation: number, direction: boolean, move?: Cell) {
@@ -263,7 +251,6 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   makeMarkings();
   genMapCells();
   distMomentos();
-  console.log("Player pos: " + playerLocation);
 }
 
 function makeMarkings() {
@@ -300,7 +287,7 @@ function resetFunc() {
     B.fromMomento(data);
   });
   distMomentos();
-  B.knownCache.forEach((cache) => { //returns coins from other cache to original cache
+  B.knownCache.forEach((cache) => {
     for (let i = 0; i < cache.coins.length; i++) {
       if (
         (cache.coins[i] != undefined) &&
@@ -312,7 +299,7 @@ function resetFunc() {
       }
     }
   });
-  B.coinBag.forEach((coin) => { //returns coins from purse to original cache
+  B.coinBag.forEach((coin) => {
     B.knownCache.forEach((cache) => {
       if (coin.cell == cache.cell) {
         cache.coins.push(coin);
@@ -320,7 +307,6 @@ function resetFunc() {
     });
   });
   B.coinBag = [];
-  console.log("start: " + startLat + ", " + startLng);
   makeMove(0, false, {
     i: startLat,
     j: startLng,

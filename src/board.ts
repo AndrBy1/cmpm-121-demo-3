@@ -30,7 +30,6 @@ interface board extends Momento<string> {
   knownCells: Cell[];
   playerLocation: number[];
   playerHistory: number[][];
-
   setCellDegrees(degree: number): void;
   getLatLngOfCell(cell: Cell): leaflet.latLng; //convert cell to leaflet.latLng because leaflet doesn't recognize interface coordinates
   calibrCell(num: number, shrink: boolean): number;
@@ -118,4 +117,5 @@ export function returnBoard(str: string): void {
   B.MomentoCache = newB.MomentoCache;
   B.knownCells = newB.knownCells;
   B.playerHistory = newB.playerHistory;
+  B.coinBag = newB.coinBag;
 }
