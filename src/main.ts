@@ -83,11 +83,9 @@ directionButtons.forEach((button, i) => {
     } else if (i == 6) {
       localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
-      removeMarkings();
+      removeMarkings(true, true);
       returnBoard(localStorage.getItem("gameState")!);
-      playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
-      lines.push(playerLine);
-      playerLine.addTo(map);
+      makeMarkings();
       B.knownCache.forEach((cache) => {
         const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
           ".\n Coin value is ";
@@ -261,35 +259,43 @@ function distMomentos() {
 
 function makeMove(orientation: number, direction: boolean, move?: Cell) {
   B.movePlayer(orientation, direction, move);
+  B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
+  makeMarkings();
+  genMapCells();
+  distMomentos();
+  console.log("Player pos: " + playerLocation);
+}
+
+function makeMarkings() {
   playerLocation = leaflet.latLng(
     B.calibrCell(B.playerLocation[0], true),
     B.calibrCell(B.playerLocation[1], true),
   );
   playerMarker.setLatLng(playerLocation);
   map.panTo(playerLocation);
-  genMapCells();
-  B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
   playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
   lines.push(playerLine);
   playerLine.addTo(map);
-  distMomentos();
-  console.log("Player pos: " + playerLocation);
 }
 
-function removeMarkings() {
-  lines.forEach((line) => {
-    line.removeFrom(map);
-  });
-  lines = [];
-  cMarkers.forEach((mark) => {
-    mark.removeFrom(map);
-  });
-  cMarkers = [];
+function removeMarkings(removeLines: boolean, removeMarkers: boolean) {
+  if (removeLines) {
+    lines.forEach((line) => {
+      line.removeFrom(map);
+    });
+    lines = [];
+  }
+  if (removeMarkers) {
+    cMarkers.forEach((mark) => {
+      mark.removeFrom(map);
+    });
+    cMarkers = [];
+  }
 }
 
 function resetFunc() {
   B.playerHistory = [];
-  removeMarkings();
+  removeMarkings(true, false);
   B.MomentoCache.forEach((data) => {
     B.fromMomento(data);
   });
