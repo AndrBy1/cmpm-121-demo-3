@@ -76,21 +76,9 @@ interactButtons.forEach((button, i) => {
         resetFunc();
       }
     } else if (i == 6) {
-      localStorage.setItem("BoardState", B.toMomento(B.knownCache[0], B));
+      saveGame();
     } else if (i == 7) {
-      removeMarkings(true, true);
-      returnBoard(localStorage.getItem("BoardState")!);
-      coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
-      makeMarkings();
-      B.knownCache.forEach((cache) => {
-        const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
-          ".\n Coin value is ";
-        const cacheMarker = leaflet.marker(
-          B.getLatLngOfCell(cache.cell),
-        );
-        cachePopup(cacheMarker, popupText, cache);
-        cMarkers.push(cacheMarker);
-      });
+      restorGame();
     }
     distMomentos();
   });
@@ -311,4 +299,24 @@ function resetFunc() {
   });
   distMomentos();
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
+}
+
+function saveGame() {
+  localStorage.setItem("BoardState", B.toMomento(B.knownCache[0], B));
+}
+
+function restorGame() {
+  removeMarkings(true, true);
+  returnBoard(localStorage.getItem("BoardState")!);
+  coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
+  makeMarkings();
+  B.knownCache.forEach((cache) => {
+    const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
+      ".\n Coin value is ";
+    const cacheMarker = leaflet.marker(
+      B.getLatLngOfCell(cache.cell),
+    );
+    cachePopup(cacheMarker, popupText, cache);
+    cMarkers.push(cacheMarker);
+  });
 }
