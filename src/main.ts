@@ -22,9 +22,9 @@ const buttonText: string[] = [
   "restore save",
 ];
 const localSize = 8;
-const startLat = 369894;
-const startLng = -1220627;
-B.playerLocation = [startLat, startLng];
+const playerLat = 369894;
+const playerLng = -1220627;
+B.playerLocation = [playerLat, playerLng];
 let playerLocation = leaflet.latLng(
   B.calibrCell(B.playerLocation[0], true),
   B.calibrCell(B.playerLocation[1], true),
@@ -73,12 +73,12 @@ interactButtons.forEach((button, i) => {
         "are you sure you want to erase your game state? \n Type yes to proceed",
       )!;
       if (answer == "yes") {
-        resetFunc();
+        resetGameState();
       }
     } else if (i == 6) {
       saveGame();
     } else if (i == 7) {
-      restorGame();
+      restoreSavedGame();
     }
     distMomentos();
   });
@@ -267,7 +267,13 @@ function removeMarkings(removeLines: boolean, removeMarkers: boolean) {
   }
 }
 
-function resetFunc() {
+function resetGameState() {
+  let answer: string = window.prompt(
+    "are you sure you want to erase your game state? \n Type yes to proceed",
+  )!;
+  if (answer != "yes") {
+    return;
+  }
   B.playerHistory = [];
   removeMarkings(true, false);
   B.MomentoCache.forEach((data) => {
@@ -294,8 +300,8 @@ function resetFunc() {
   });
   B.coinBag = [];
   makeMove(0, false, {
-    i: startLat,
-    j: startLng,
+    i: playerLat,
+    j: playerLng,
   });
   distMomentos();
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
@@ -305,7 +311,7 @@ function saveGame() {
   localStorage.setItem("BoardState", B.toMomento(B.knownCache[0], B));
 }
 
-function restorGame() {
+function restoreSavedGame() {
   removeMarkings(true, true);
   returnBoard(localStorage.getItem("BoardState")!);
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
