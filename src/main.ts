@@ -30,7 +30,6 @@ let playerLocation = leaflet.latLng(
   B.calibrCell(B.playerLocation[1], true),
 );
 const cellDegrees = 0.0001;
-B.setCellDegrees(cellDegrees);
 
 const coinDisplay = document.querySelector<HTMLDivElement>("#statusPanel")!;
 coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
@@ -77,10 +76,10 @@ interactButtons.forEach((button, i) => {
         resetFunc();
       }
     } else if (i == 6) {
-      localStorage.setItem("gameState", B.toMomento(B.knownCache[0], B));
+      localStorage.setItem("BoardState", B.toMomento(B.knownCache[0], B));
     } else if (i == 7) {
       removeMarkings(true, true);
-      returnBoard(localStorage.getItem("gameState")!);
+      returnBoard(localStorage.getItem("BoardState")!);
       coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
       makeMarkings();
       B.knownCache.forEach((cache) => {
@@ -93,6 +92,7 @@ interactButtons.forEach((button, i) => {
         cMarkers.push(cacheMarker);
       });
     }
+    distMomentos();
   });
   document.body.append(button);
 });
@@ -102,6 +102,7 @@ map.on("locationfound", function (e) {
     i: B.calibrCell(e.latlng.lat, false),
     j: B.calibrCell(e.latlng.lng, false),
   });
+  distMomentos();
 });
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -226,8 +227,7 @@ function distMomentos() {
       distance(B.knownCache[c].cell, {
         i: B.playerLocation[0],
         j: B.playerLocation[1],
-      }) >
-        260
+      }) > 260
     ) {
       let momentostr = B.toMomento(B.knownCache[c]);
       c--;
@@ -250,7 +250,6 @@ function makeMove(orientation: number, direction: boolean, move?: Cell) {
   B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
   makeMarkings();
   genMapCells();
-  distMomentos();
 }
 
 function makeMarkings() {
@@ -286,7 +285,6 @@ function resetFunc() {
   B.MomentoCache.forEach((data) => {
     B.fromMomento(data);
   });
-  distMomentos();
   B.knownCache.forEach((cache) => {
     for (let i = 0; i < cache.coins.length; i++) {
       if (
@@ -311,5 +309,6 @@ function resetFunc() {
     i: startLat,
     j: startLng,
   });
+  distMomentos();
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
 }
