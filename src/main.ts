@@ -52,38 +52,36 @@ const interactButtons = Array.from(
   () => document.createElement("button"),
 );
 
-interactButtons.forEach((button, i) => {
-  button.innerHTML = `${buttonText[i]}`;
-  button.addEventListener("click", () => {
-    if (i == 0) {
-      makeMove(0, true);
-    } else if (i == 1) {
-      makeMove(0, false);
-    } else if (i == 2) {
-      makeMove(1, false);
-    } else if (i == 3) {
-      makeMove(1, true);
-    } else if (i == 4) {
-      map.locate({
-        watch: false,
-        setView: false,
-      });
-    } else if (i == 5) {
-      let answer: string = window.prompt(
-        "are you sure you want to erase your game state? \n Type yes to proceed",
-      )!;
-      if (answer == "yes") {
-        resetGameState();
+setupUIControls();
+function setupUIControls() {
+  interactButtons.forEach((button, i) => {
+    button.innerHTML = `${buttonText[i]}`;
+    button.addEventListener("click", () => {
+      if (i == 0) {
+        makeMove(0, true);
+      } else if (i == 1) {
+        makeMove(0, false);
+      } else if (i == 2) {
+        makeMove(1, false);
+      } else if (i == 3) {
+        makeMove(1, true);
+      } else if (i == 4) {
+        map.locate({
+          watch: false,
+          setView: false,
+        });
+      } else if (i == 5) {
+        confirmReset();
+      } else if (i == 6) {
+        saveGame();
+      } else if (i == 7) {
+        restoreSavedGame();
       }
-    } else if (i == 6) {
-      saveGame();
-    } else if (i == 7) {
-      restoreSavedGame();
-    }
-    distMomentos();
+      distMomentos();
+    });
+    document.body.append(button);
   });
-  document.body.append(button);
-});
+}
 
 map.on("locationfound", function (e) {
   makeMove(0, false, {
@@ -267,7 +265,7 @@ function removeMarkings(removeLines: boolean, removeMarkers: boolean) {
   }
 }
 
-function resetGameState() {
+function confirmReset() {
   let answer: string = window.prompt(
     "are you sure you want to erase your game state? \n Type yes to proceed",
   )!;
