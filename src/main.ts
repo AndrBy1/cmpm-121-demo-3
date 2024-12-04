@@ -97,7 +97,7 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 genMapCells();
-function genMapCells() {
+function genMapCells() { //create all the cells of the map
   for (
     let x = playerLocation.lat - B.calibrCell(localSize, true);
     x < playerLocation.lat + B.calibrCell(localSize, true);
@@ -120,12 +120,13 @@ function generateCells(x: number, y: number) {
     j: Math.floor(B.calibrCell(y, false)),
   };
   B.knownCells.forEach((cell) => {
+    //if statement ensures the cell generated is unique and not duplicate.
     if (newCell.i == cell.i && newCell.j == cell.j) {
       generate = false;
     }
   });
-  if (generate) {
-    B.knownCells.push(newCell);
+  if (generate) { //the cache is only generated when the cell is new
+    B.knownCells.push(newCell); //cell is only pushed when it is new
     randomNum = genRandom(1, 100);
     if (randomNum < 10) {
       generateCache(newCell);
