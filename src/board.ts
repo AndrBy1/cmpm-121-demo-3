@@ -50,7 +50,10 @@ export let B: board = {
   },
 
   getLatLngOfCell(cell: Cell): leaflet.LatLng {
-    return leaflet.latLng(cell.i * this.cellDegrees, cell.j * this.cellDegrees);
+    return leaflet.latLng(
+      Math.floor(cell.i) * this.cellDegrees,
+      Math.floor(cell.j) * this.cellDegrees,
+    );
   },
 
   calibrCell(num: number, shrink: boolean): number {

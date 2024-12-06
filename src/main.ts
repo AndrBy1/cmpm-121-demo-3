@@ -3,14 +3,15 @@
 // deno-lint-ignore-file
 // @deno-types="npm:@types/leaflet@^1.9.14"
 
-import leaflet from "leaflet";
+import leaflet, { marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
-let cMarkers: leaflet.Marker<any>[] = [];
+let cMarkers = new Map<Cell, leaflet.Marker>();
+//let cMarkers: leaflet.Marker<any>[] = [];
 const buttonText: string[] = [
   "⬆️",
   "⬇️",
@@ -125,8 +126,8 @@ function generateCells(x: number, y: number) {
       generate = false;
     }
   });
-  if (generate) { //the cache is only generated when the cell is new
-    B.knownCells.push(newCell); //cell is only pushed when it is new
+  if (generate) { //the cache is only generated when the cell is new making caches unique
+    B.knownCells.push(newCell); //cell is only pushed when it is new making cells unique
     randomNum = genRandom(1, 100);
     if (randomNum < 10) {
       generateCache(newCell);
@@ -146,10 +147,10 @@ function generateCache(cell: Cell) {
 
   let coinCount: number;
   for (coinCount = genRandom(1, 6); coinCount > 0; coinCount--) {
-    localCache.coins.push({ cell: cell, serial: coinCount });
+    localCache.coins.push({ cell: cell, serial: coinCount }); //cells generated are unique, serial number is random number between 1 to 6
   }
   cachePopup(cacheMarker, popupText, localCache);
-  cMarkers.push(cacheMarker);
+  cMarkers.set(cell, cacheMarker);
   B.knownCache.push(localCache);
 }
 
@@ -214,9 +215,15 @@ function distMomentos() {
       distance(B.knownCache[c].cell, {
         i: B.playerLocation[0],
         j: B.playerLocation[1],
-      }) > 260
+      }) > 200
     ) {
-      let momentostr = B.toMomento(B.knownCache[c]);
+      B.toMomento(B.knownCache[c]);
+      console.log("cell: " + JSON.stringify(B.knownCache[c].cell));
+      if (cMarkers.has(B.knownCache[c].cell)) {
+        const cacheMarker = cMarkers.get(B.knownCache[c].cell);
+        map.removeLayer(cacheMarker!);
+        cMarkers.delete(B.knownCache[c].cell);
+      }
       c--;
     }
   }
@@ -224,7 +231,7 @@ function distMomentos() {
     const cache: Cache = JSON.parse(B.MomentoCache[s]);
     if (
       distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
-        260
+        300
     ) {
       B.fromMomento(B.MomentoCache[s]);
       s--;
@@ -262,7 +269,7 @@ function removeMarkings(removeLines: boolean, removeMarkers: boolean) {
     cMarkers.forEach((mark) => {
       mark.removeFrom(map);
     });
-    cMarkers = [];
+    cMarkers.clear();
   }
 }
 
@@ -322,6 +329,6 @@ function restoreSavedGame() {
       B.getLatLngOfCell(cache.cell),
     );
     cachePopup(cacheMarker, popupText, cache);
-    cMarkers.push(cacheMarker);
+    cMarkers.set(cache.cell, cacheMarker);
   });
 }
