@@ -10,7 +10,7 @@ import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
-let cMarkers = new Map<Cell, leaflet.Marker>();
+let cMarkers = new Map<string, leaflet.Marker>();
 //let cMarkers: leaflet.Marker<any>[] = [];
 const buttonText: string[] = [
   "⬆️",
@@ -150,7 +150,7 @@ function generateCache(cell: Cell) {
     localCache.coins.push({ cell: cell, serial: coinCount }); //cells generated are unique, serial number is random number between 1 to 6
   }
   cachePopup(cacheMarker, popupText, localCache);
-  cMarkers.set(cell, cacheMarker);
+  cMarkers.set(JSON.stringify(cell), cacheMarker);
   B.knownCache.push(localCache);
 }
 
@@ -215,28 +215,29 @@ function distMomentos() {
       distance(B.knownCache[c].cell, {
         i: B.playerLocation[0],
         j: B.playerLocation[1],
-      }) > 200
+      }) > 300
     ) {
-      B.toMomento(B.knownCache[c]);
-      console.log("cell: " + JSON.stringify(B.knownCache[c].cell));
-      if (cMarkers.has(B.knownCache[c].cell)) {
-        const cacheMarker = cMarkers.get(B.knownCache[c].cell);
+      //B.toMomento(B.knownCache[c]);
+      if (cMarkers.has(JSON.stringify(B.knownCache[c].cell))) {
+        const cacheMarker = cMarkers.get(JSON.stringify(B.knownCache[c].cell));
         map.removeLayer(cacheMarker!);
-        cMarkers.delete(B.knownCache[c].cell);
+        cMarkers.delete(JSON.stringify(B.knownCache[c].cell));
       }
-      c--;
+    } else if (!cMarkers.has(JSON.stringify(B.knownCache[c].cell))) {
+      console.log("marker created");
+      createMarker(B.knownCache[c]);
     }
   }
-  for (let s = 0; s < B.MomentoCache.length; s++) {
-    const cache: Cache = JSON.parse(B.MomentoCache[s]);
-    if (
-      distance(cache.cell, { i: B.playerLocation[0], j: B.playerLocation[1] }) <
-        300
-    ) {
-      B.fromMomento(B.MomentoCache[s]);
-      s--;
-    }
-  }
+}
+
+function createMarker(localCache: Cache) {
+  const popupText = "Cache at " + localCache.cell.i + ", " + localCache.cell.j +
+    ".\n Coin value is ";
+  const cacheMarker = leaflet.marker(
+    B.getLatLngOfCell(localCache.cell),
+  );
+  cachePopup(cacheMarker, popupText, localCache);
+  cMarkers.set(JSON.stringify(localCache.cell), cacheMarker);
 }
 
 function makeMove(orientation: number, direction: boolean, move?: Cell) {
@@ -329,6 +330,6 @@ function restoreSavedGame() {
       B.getLatLngOfCell(cache.cell),
     );
     cachePopup(cacheMarker, popupText, cache);
-    cMarkers.set(cache.cell, cacheMarker);
+    cMarkers.set(JSON.stringify(cache.cell), cacheMarker);
   });
 }

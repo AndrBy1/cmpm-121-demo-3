@@ -71,7 +71,7 @@ export let B: board = {
     } else {
       str = JSON.stringify(cache);
       this.MomentoCache.push(str);
-      this.knownCache.splice(this.knownCache.indexOf(cache), 1);
+      //this.knownCache.splice(this.knownCache.indexOf(cache), 1);
     }
     return str;
   },
