@@ -78,7 +78,7 @@ function setupUIControls() {
       } else if (i == 7) {
         restoreSavedGame();
       }
-      distMomentos();
+      distanceChange();
     });
     document.body.append(button);
   });
@@ -89,7 +89,7 @@ map.on("locationfound", function (e) {
     i: B.calibrCell(e.latlng.lat, false),
     j: B.calibrCell(e.latlng.lng, false),
   });
-  distMomentos();
+  distanceChange();
 });
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -209,7 +209,7 @@ function popupButtonClick(
     .toString();
 }
 
-function distMomentos() {
+function distanceChange() {
   for (let c = 0; c < B.knownCache.length; c++) {
     if (
       distance(B.knownCache[c].cell, {
@@ -217,7 +217,6 @@ function distMomentos() {
         j: B.playerLocation[1],
       }) > 300
     ) {
-      //B.toMomento(B.knownCache[c]);
       if (cMarkers.has(JSON.stringify(B.knownCache[c].cell))) {
         const cacheMarker = cMarkers.get(JSON.stringify(B.knownCache[c].cell));
         map.removeLayer(cacheMarker!);
@@ -226,6 +225,16 @@ function distMomentos() {
     } else if (!cMarkers.has(JSON.stringify(B.knownCache[c].cell))) {
       console.log("marker created");
       createMarker(B.knownCache[c]);
+    }
+    let haveItem = false;
+    for (let i = 0; i < B.knownCache.length; i++) {
+      if (B.MomentoCache[i] == JSON.stringify(B.knownCache[c])) {
+        haveItem = true;
+        break;
+      }
+    }
+    if (haveItem) {
+      B.toMomento(B.knownCache[c]);
     }
   }
 }
@@ -310,7 +319,7 @@ function confirmReset() {
     i: playerLat,
     j: playerLng,
   });
-  distMomentos();
+  distanceChange();
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
 }
 
