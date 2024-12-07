@@ -120,6 +120,7 @@ function generateCells(x: number, y: number) {
     i: Math.floor(B.calibrCell(x, false)),
     j: Math.floor(B.calibrCell(y, false)),
   };
+  createBounds(newCell);
   B.knownCells.forEach((cell) => {
     //if statement ensures the cell generated is unique and not duplicate.
     if (newCell.i == cell.i && newCell.j == cell.j) {
@@ -128,15 +129,22 @@ function generateCells(x: number, y: number) {
   });
   if (generate) { //the cache is only generated when the cell is new making caches unique
     B.knownCells.push(newCell); //cell is only pushed when it is new making cells unique
-    createBounds(newCell);
+
     randomNum = genRandom(1, 100); //this makes the cache generate randomly
     if (randomNum < 10) {
       generateCache(newCell);
     }
   }
 }
-
 function createBounds(cell: Cell) {
+  for (let i = 0; i < cellBounds.length; i++) {
+    if (
+      (B.getLatLngOfCell(cell).lat == cellBounds[i].getCenter().lat) &&
+      (B.getLatLngOfCell(cell).lng == cellBounds[i].getCenter().lng)
+    ) { //so it doesn't accidentally duplicate cells
+      return;
+    }
+  }
   const bound = leaflet.latLngBounds([
     B.getLatLngOfCell(cell).lat - B.cellDegrees / 2,
     B.getLatLngOfCell(cell).lng - B.cellDegrees / 2,
