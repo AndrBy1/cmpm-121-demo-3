@@ -11,7 +11,7 @@ import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
 let cMarkers = new Map<string, leaflet.Marker>();
-//let cMarkers: leaflet.Marker<any>[] = [];
+let cellBounds = [];
 const buttonText: string[] = [
   "⬆️",
   "⬇️",
@@ -247,23 +247,24 @@ function createMarker(localCache: Cache) {
 function makeMove(orientation: number, direction: boolean, move?: Cell) {
   B.movePlayer(orientation, direction, move);
   B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
-  makeMarkings();
+  makeAllMarkings();
   genMapCells();
 }
 
-function makeMarkings() {
+function makeAllMarkings() {
   playerLocation = leaflet.latLng(
     B.calibrCell(B.playerLocation[0], true),
     B.calibrCell(B.playerLocation[1], true),
   );
   playerMarker.setLatLng(playerLocation);
   map.panTo(playerLocation);
+  distanceChange();
   playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
   lines.push(playerLine);
   playerLine.addTo(map);
 }
 
-function removeMarkings(removeLines: boolean, removeMarkers: boolean) {
+function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) {
   if (removeLines) {
     lines.forEach((line) => {
       line.removeFrom(map);
@@ -286,7 +287,7 @@ function confirmReset() {
     return;
   }
   B.playerHistory = [];
-  removeMarkings(true, false);
+  removeAllMarkings(true, false);
   B.MomentoCache.forEach((data) => {
     B.fromMomento(data);
   });
@@ -323,10 +324,10 @@ function saveGame() {
 }
 
 function restoreSavedGame() {
-  removeMarkings(true, true);
+  removeAllMarkings(true, true);
   returnBoard(localStorage.getItem("BoardState")!);
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
-  makeMarkings();
+  makeAllMarkings();
   B.knownCache.forEach((cache) => {
     const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
       ".\n Coin value is ";
