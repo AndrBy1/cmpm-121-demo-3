@@ -11,7 +11,7 @@ import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
 let cMarkers = new Map<string, leaflet.Marker>();
-let cellBounds: leaflet.Rectangle[] = [];
+let cellBounds = new Map<string, leaflet.Rectangle>();
 const buttonText: string[] = [
   "⬆️",
   "⬇️",
@@ -137,13 +137,8 @@ function generateCells(x: number, y: number) {
   }
 }
 function createBounds(cell: Cell) {
-  for (let i = 0; i < cellBounds.length; i++) {
-    if (
-      (B.getLatLngOfCell(cell).lat == cellBounds[i].getCenter().lat) &&
-      (B.getLatLngOfCell(cell).lng == cellBounds[i].getCenter().lng)
-    ) { //so it doesn't accidentally duplicate cells
-      return;
-    }
+  if (cellBounds.has(JSON.stringify(cell))) { //so it doesn't accidentally duplicate cells
+    return;
   }
   const bound = leaflet.latLngBounds([
     B.getLatLngOfCell(cell).lat - B.cellDegrees / 2,
@@ -154,7 +149,7 @@ function createBounds(cell: Cell) {
   ]);
   const rectbound = leaflet.rectangle(bound);
   rectbound.addTo(map);
-  cellBounds.push(rectbound);
+  cellBounds.set(JSON.stringify(cell), rectbound);
 }
 
 function generateCache(cell: Cell) {
