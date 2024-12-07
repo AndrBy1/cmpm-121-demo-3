@@ -128,7 +128,7 @@ function generateCells(x: number, y: number) {
   });
   if (generate) { //the cache is only generated when the cell is new making caches unique
     B.knownCells.push(newCell); //cell is only pushed when it is new making cells unique
-    randomNum = genRandom(1, 100);
+    randomNum = genRandom(1, 100); //this makes the cache generate randomly
     if (randomNum < 10) {
       generateCache(newCell);
     }
@@ -136,25 +136,20 @@ function generateCells(x: number, y: number) {
 }
 
 function generateCache(cell: Cell) {
-  const popupText = "Cache at " + cell.i + ", " + cell.j + ".\n Coin value is ";
-  const cacheMarker = leaflet.marker(
-    B.getLatLngOfCell(B.knownCells[B.knownCells.length - 1]),
-  );
   let localCache: Cache = {
     cell: cell,
     coins: [],
   };
-
+  createMarker(localCache);
   let coinCount: number;
   for (coinCount = genRandom(1, 6); coinCount > 0; coinCount--) {
-    localCache.coins.push({ cell: cell, serial: coinCount }); //cells generated are unique, serial number is random number between 1 to 6
+    localCache.coins.push({ cell: cell, serial: coinCount }); //coins generated are unique and random, serial number is random number between 1 to 6
   }
-  cachePopup(cacheMarker, popupText, localCache);
-  cMarkers.set(JSON.stringify(cell), cacheMarker);
+
   B.knownCache.push(localCache);
 }
 
-function genRandom(min: number, max: number) {
+function genRandom(min: number, max: number) { //this creates a random number between the min and max
   return Math.floor((Math.random() * (max - min + 1)) + min);
 }
 
