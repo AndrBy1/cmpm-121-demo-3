@@ -160,7 +160,7 @@ function generateCache(cell: Cell) { //creates each of the caches
   createMarker(localCache);
   let coinCount: number;
   for (coinCount = genRandom(1, 6); coinCount > 0; coinCount--) {
-    localCache.coins.push({ cell: cell, serial: coinCount }); //coins generated are unique and random, serial number is random number between 1 to 6
+    localCache.coins.push({ cell: cell, serial: coinCount }); //coins generated are unique and random, serial number is from genRandom
   }
 
   B.knownCache.push(localCache);
