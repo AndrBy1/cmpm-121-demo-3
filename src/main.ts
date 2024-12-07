@@ -54,7 +54,7 @@ const interactButtons = Array.from(
 );
 
 setupUIControls();
-function setupUIControls() {
+function setupUIControls() { //this sets up the controls for movement and resetting game
   interactButtons.forEach((button, i) => {
     button.innerHTML = `${buttonText[i]}`;
     button.addEventListener("click", () => {
@@ -78,18 +78,18 @@ function setupUIControls() {
       } else if (i == 7) {
         restoreSavedGame();
       }
-      distanceChange();
+      markerManager();
     });
     document.body.append(button);
   });
 }
 
-map.on("locationfound", function (e) {
+map.on("locationfound", function (e) { //this is used for finding the players real world location
   makeMove(0, false, {
     i: B.calibrCell(e.latlng.lat, false),
     j: B.calibrCell(e.latlng.lng, false),
   });
-  distanceChange();
+  markerManager();
 });
 
 leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -114,7 +114,7 @@ function genMapCells() { //create all the cells of the map
   }
 }
 
-function generateCells(x: number, y: number) {
+function generateCells(x: number, y: number) { // creates each individual cell
   let generate = true;
   const newCell: Cell = {
     i: Math.floor(B.calibrCell(x, false)),
@@ -136,7 +136,7 @@ function generateCells(x: number, y: number) {
     }
   }
 }
-function createBounds(cell: Cell) {
+function createBounds(cell: Cell) { //creates the rectangles for each cell
   if (cellBounds.has(JSON.stringify(cell))) { //so it doesn't accidentally duplicate cells
     return;
   }
@@ -152,7 +152,7 @@ function createBounds(cell: Cell) {
   cellBounds.set(JSON.stringify(cell), rectbound);
 }
 
-function generateCache(cell: Cell) {
+function generateCache(cell: Cell) { //creates each of the caches
   let localCache: Cache = {
     cell: cell,
     coins: [],
@@ -170,11 +170,11 @@ function genRandom(min: number, max: number) { //this creates a random number be
   return Math.floor((Math.random() * (max - min + 1)) + min);
 }
 
-function distance(cell1: Cell, cell2: Cell) {
+function distance(cell1: Cell, cell2: Cell) { //finds the distance between 2 cells
   return Math.pow(cell2.i - cell1.i, 2) + Math.pow(cell2.j - cell1.j, 2);
 }
 
-function cachePopup(
+function cachePopup( //creates a popup that binds to a marker
   marker: leaflet.Marker<any>,
   popupText: string,
   cache: Cache,
@@ -201,7 +201,7 @@ function cachePopup(
   marker.addTo(map);
 }
 
-function popupButtonClick(
+function popupButtonClick( //function for each of the buttons in the popup, what it does depends on the parameters
   collect: boolean,
   localStash: Coin[],
   content: HTMLDivElement,
@@ -221,7 +221,7 @@ function popupButtonClick(
     .toString();
 }
 
-function distanceChange() {
+function markerManager() { //will remove or regenerate cache marker depending on distance to player
   for (let c = 0; c < B.knownCache.length; c++) {
     if (
       distance(B.knownCache[c].cell, {
@@ -251,7 +251,7 @@ function distanceChange() {
   }
 }
 
-function createMarker(localCache: Cache) {
+function createMarker(localCache: Cache) { //creates a singular marker
   const popupText = "Cache at " + localCache.cell.i + ", " + localCache.cell.j +
     ".\n Coin value is ";
   const cacheMarker = leaflet.marker(
@@ -261,27 +261,26 @@ function createMarker(localCache: Cache) {
   cMarkers.set(JSON.stringify(localCache.cell), cacheMarker);
 }
 
-function makeMove(orientation: number, direction: boolean, move?: Cell) {
+function makeMove(orientation: number, direction: boolean, move?: Cell) { //function for when the player moves, directional buttons call this
   B.movePlayer(orientation, direction, move);
   B.playerHistory.push([B.playerLocation[0], B.playerLocation[1]]);
   makeAllMarkings();
   genMapCells();
 }
 
-function makeAllMarkings() {
+function makeAllMarkings() { //shows all the markings in range of the player
   playerLocation = leaflet.latLng(
     B.calibrCell(B.playerLocation[0], true),
     B.calibrCell(B.playerLocation[1], true),
   );
   playerMarker.setLatLng(playerLocation);
   map.panTo(playerLocation);
-  distanceChange();
   playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "black" });
   lines.push(playerLine);
   playerLine.addTo(map);
 }
 
-function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) {
+function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) { //removes all the marking for if the game gets restored
   if (removeLines) {
     lines.forEach((line) => {
       line.removeFrom(map);
@@ -289,14 +288,19 @@ function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) {
     lines = [];
   }
   if (removeMarkers) {
-    cMarkers.forEach((mark) => {
-      mark.removeFrom(map);
+    B.knownCache.forEach((cache) => {
+      if (cMarkers.has(JSON.stringify(cache.cell))) {
+        console.log("Removing marker");
+        const cacheMarker = cMarkers.get(JSON.stringify(cache.cell));
+        map.removeLayer(cacheMarker!);
+        cMarkers.delete(JSON.stringify(cache.cell));
+      }
     });
     cMarkers.clear();
   }
 }
 
-function confirmReset() {
+function confirmReset() { //when reset is pressed, makes sure the player wants to reset and resets the game
   let answer: string = window.prompt(
     "are you sure you want to erase your game state? \n Type yes to proceed",
   )!;
@@ -332,15 +336,15 @@ function confirmReset() {
     i: playerLat,
     j: playerLng,
   });
-  distanceChange();
+  markerManager();
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
 }
 
-function saveGame() {
+function saveGame() { //saves game onto local storage
   localStorage.setItem("BoardState", B.toMomento(B.knownCache[0], B));
 }
 
-function restoreSavedGame() {
+function restoreSavedGame() { //restores game from local to game
   removeAllMarkings(true, true);
   returnBoard(localStorage.getItem("BoardState")!);
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;

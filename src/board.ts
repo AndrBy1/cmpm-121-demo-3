@@ -45,18 +45,19 @@ export let B: board = {
   MomentoCache: [],
   playerLocation: [369894, -1220627],
   playerHistory: [[369894, -1220627]],
-  setCellDegrees(degree: number): void {
+
+  setCellDegrees(degree: number): void { //set cell degrees to parameter
     this.cellDegrees = degree;
   },
 
-  getLatLngOfCell(cell: Cell): leaflet.LatLng {
+  getLatLngOfCell(cell: Cell): leaflet.LatLng { //translate cell location to leaflet latlng
     return leaflet.latLng(
       Math.floor(cell.i) * this.cellDegrees,
       Math.floor(cell.j) * this.cellDegrees,
     );
   },
 
-  calibrCell(num: number, shrink: boolean): number {
+  calibrCell(num: number, shrink: boolean): number { //returns parameter after shrunken or increased by cell degree
     if (shrink) {
       return Math.floor(num) * B.cellDegrees;
     } else {
@@ -64,25 +65,24 @@ export let B: board = {
     }
   },
 
-  toMomento(cache: Cache, board?: board): string {
+  toMomento(cache: Cache, board?: board): string { //translate cache or board into string, if cache, it is put into array
     let str: string;
     if (board != undefined) {
       str = JSON.stringify(board);
     } else {
       str = JSON.stringify(cache);
       this.MomentoCache.push(str);
-      //this.knownCache.splice(this.knownCache.indexOf(cache), 1);
     }
     return str;
   },
 
-  fromMomento(momento: string): void {
+  fromMomento(momento: string): void { //translate string to cache
     const cache: Cache = JSON.parse(momento);
     this.MomentoCache.splice(this.MomentoCache.indexOf(momento));
     this.knownCache.push(cache);
   },
 
-  movePlayer(orientation: number, direction: boolean, move?: Cell): void {
+  movePlayer(orientation: number, direction: boolean, move?: Cell): void { //moves the player, orientation is 0 = lat, 1 = lng. direction is east or west based on orientation.
     if (move != undefined) {
       this.playerLocation = [move.i, move.j];
     } else if (direction) {
@@ -97,7 +97,7 @@ export let B: board = {
       );
     }
   },
-  getHistoryLatLng(): leaflet.latlng {
+  getHistoryLatLng(): leaflet.latlng { //returns the latlng history of player
     let history: number[][] = [];
     this.playerHistory.forEach((num) => {
       history.push([
@@ -109,7 +109,7 @@ export let B: board = {
   },
 };
 
-export function returnBoard(str: string): void {
+export function returnBoard(str: string): void { //translate string to board and returns it
   let newB = JSON.parse(str);
   B.movePlayer(0, false, {
     i: newB.playerLocation[0],
