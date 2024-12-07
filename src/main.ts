@@ -11,7 +11,7 @@ import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
 let cMarkers = new Map<string, leaflet.Marker>();
-let cellBounds = [];
+let cellBounds: leaflet.Rectangle[] = [];
 const buttonText: string[] = [
   "⬆️",
   "⬇️",
@@ -128,11 +128,25 @@ function generateCells(x: number, y: number) {
   });
   if (generate) { //the cache is only generated when the cell is new making caches unique
     B.knownCells.push(newCell); //cell is only pushed when it is new making cells unique
+    createBounds(newCell);
     randomNum = genRandom(1, 100); //this makes the cache generate randomly
     if (randomNum < 10) {
       generateCache(newCell);
     }
   }
+}
+
+function createBounds(cell: Cell) {
+  const bound = leaflet.latLngBounds([
+    B.getLatLngOfCell(cell).lat - B.cellDegrees / 2,
+    B.getLatLngOfCell(cell).lng - B.cellDegrees / 2,
+  ], [
+    B.getLatLngOfCell(cell).lat + B.cellDegrees / 2,
+    B.getLatLngOfCell(cell).lng + B.cellDegrees / 2,
+  ]);
+  const rectbound = leaflet.rectangle(bound);
+  rectbound.addTo(map);
+  cellBounds.push(rectbound);
 }
 
 function generateCache(cell: Cell) {
