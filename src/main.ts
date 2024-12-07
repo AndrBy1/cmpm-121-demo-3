@@ -162,7 +162,6 @@ function generateCache(cell: Cell) { //creates each of the caches
   for (coinCount = genRandom(1, 6); coinCount > 0; coinCount--) {
     localCache.coins.push({ cell: cell, serial: coinCount }); //coins generated are unique and random, serial number is from genRandom
   }
-
   B.knownCache.push(localCache);
 }
 
@@ -176,24 +175,22 @@ function distance(cell1: Cell, cell2: Cell) { //finds the distance between 2 cel
 
 function cachePopup( //creates a popup that binds to a marker
   marker: leaflet.Marker<any>,
-  popupText: string,
   cache: Cache,
 ) {
   marker.bindPopup(() => {
     const popupContent = document.createElement("div");
-    popupContent.innerHTML = `
-      <div> "${popupText}<span id="count">${cache.coins.length}</span>\n".</div> 
-      <button id="collect">collect</button>
-      <button id="deposit">deposit</button>`;
+    popupContent.innerHTML = popupTxt(cache);
+    popupContent.innerHTML += `<button id="collect">collect</button>
+                              <button id="deposit">deposit</button>`;
 
     popupContent.querySelector<HTMLButtonElement>("#collect")!
       .addEventListener("click", () => {
-        popupButtonClick(true, cache.coins, popupContent);
+        popupButtonClick(true, cache, popupContent);
       });
 
     popupContent.querySelector<HTMLButtonElement>("#deposit")!
       .addEventListener("click", () => {
-        popupButtonClick(false, cache.coins, popupContent);
+        popupButtonClick(false, cache, popupContent);
       });
 
     return popupContent;
@@ -203,22 +200,40 @@ function cachePopup( //creates a popup that binds to a marker
 
 function popupButtonClick( //function for each of the buttons in the popup, what it does depends on the parameters
   collect: boolean,
-  localStash: Coin[],
+  localCache: Cache,
   content: HTMLDivElement,
 ) {
-  if (collect && localStash.length > 0) {
-    if (localStash.length > 0) {
-      B.coinBag.push(localStash.pop()!);
+  if (collect && localCache.coins.length > 0) {
+    if (localCache.coins.length > 0) {
+      B.coinBag.push(localCache.coins.pop()!);
     }
   } else if (!collect && B.coinBag.length > 0) {
     if (B.coinBag.length > 0) {
-      localStash.push(B.coinBag.pop()!);
+      localCache.coins.push(B.coinBag.pop()!);
     }
   }
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
-  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = localStash
-    .length
-    .toString();
+  //content.innerHTML = popupTxt(localCache);
+  content.querySelector<HTMLSpanElement>("#count")!.innerHTML = popupTxt(
+    localCache,
+  );
+}
+
+function popupTxt(cache: Cache) {
+  let content: string;
+  let txt = "Cache at " + cache.cell.i + ", " + cache.cell.j +
+    ".\n Coin count is ";
+  let serialText = "serial number(s): ";
+  for (let i = 0; i < cache.coins.length; i++) {
+    serialText += JSON.stringify(cache.coins[i].serial);
+    if (i < cache.coins.length - 1) {
+      serialText += ", ";
+    }
+  }
+  content = `
+    <div> <span id="count">${txt}${cache.coins.length}, \n${serialText}\n.</div> </span>`;
+
+  return content;
 }
 
 function markerManager() { //will remove or regenerate cache marker depending on distance to player
@@ -252,12 +267,10 @@ function markerManager() { //will remove or regenerate cache marker depending on
 }
 
 function createMarker(localCache: Cache) { //creates a singular marker
-  const popupText = "Cache at " + localCache.cell.i + ", " + localCache.cell.j +
-    ".\n Coin value is ";
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(localCache.cell),
   );
-  cachePopup(cacheMarker, popupText, localCache);
+  cachePopup(cacheMarker, localCache);
   cMarkers.set(JSON.stringify(localCache.cell), cacheMarker);
 }
 
@@ -350,12 +363,10 @@ function restoreSavedGame() { //restores game from local to game
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
   makeAllMarkings();
   B.knownCache.forEach((cache) => {
-    const popupText = "Cache at " + cache.cell.i + ", " + cache.cell.j +
-      ".\n Coin value is ";
     const cacheMarker = leaflet.marker(
       B.getLatLngOfCell(cache.cell),
     );
-    cachePopup(cacheMarker, popupText, cache);
+    cachePopup(cacheMarker, cache);
     cMarkers.set(JSON.stringify(cache.cell), cacheMarker);
   });
 }
