@@ -3,10 +3,15 @@
 // deno-lint-ignore-file
 // @deno-types="npm:@types/leaflet@^1.9.14"
 
-import leaflet, { marker } from "leaflet";
+import leaflet, { Marker, marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 import { B, type Cache, type Cell, type Coin, returnBoard } from "./board.ts";
+import "leaflet/dist/leaflet.css";
+import "./style.css";
+
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 let randomNum: number;
 let lines: leaflet.Polyline<any, any>[] = [];
@@ -44,7 +49,21 @@ let playerLine = leaflet.polyline(B.getHistoryLatLng(), { color: "red" });
 lines.push(playerLine);
 playerLine.addTo(map);
 
-let playerMarker = leaflet.marker(playerLocation);
+let PlayerIcon = leaflet.icon({
+  iconUrl: icon,
+  iconSize: [32, 38],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+let markerIcon = leaflet.icon({
+  iconUrl: icon,
+  iconSize: [24, 24],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
+let playerMarker = leaflet.marker(playerLocation, { icon: PlayerIcon });
 playerMarker.bindPopup("Player Location").openPopup();
 playerMarker.addTo(map);
 
@@ -81,6 +100,7 @@ function setupUIControls() { //this sets up the controls for movement and resett
       markerManager();
     });
     document.body.append(button);
+    //localStorage.setItem("storedCache", JSON.stringify(B.knownCache));
   });
 }
 
@@ -97,7 +117,22 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 
-genMapCells();
+if (
+  localStorage.getItem("stored-Caches") && localStorage.getItem("stored-cells")
+) {
+  console.log(
+    "There is stored cache: " + localStorage.getItem("stored-Caches"),
+  );
+  B.knownCache = JSON.parse(localStorage.getItem("stored-Caches")!);
+  console.log("knownCache size: " + B.knownCache.length);
+  B.OGCache = JSON.parse(localStorage.getItem("stored-Caches")!);
+  makeAllMarkings();
+  B.knownCells = JSON.parse(localStorage.getItem("stored-cells")!);
+  markerManager();
+} else {
+  genMapCells();
+}
+
 function genMapCells() { //create all the cells of the map
   for (
     let x = playerLocation.lat - B.calibrCell(localSize, true);
@@ -112,6 +147,8 @@ function genMapCells() { //create all the cells of the map
       generateCells(x, y);
     }
   }
+  localStorage.setItem("stored-Caches", JSON.stringify(B.OGCache));
+  localStorage.setItem("stored-cells", JSON.stringify(B.knownCells));
 }
 
 function generateCells(x: number, y: number) { // creates each individual cell
@@ -129,7 +166,6 @@ function generateCells(x: number, y: number) { // creates each individual cell
   });
   if (generate) { //the cache is only generated when the cell is new making caches unique
     B.knownCells.push(newCell); //cell is only pushed when it is new making cells unique
-
     randomNum = genRandom(1, 100); //this makes the cache generate randomly
     if (randomNum < 10) {
       generateCache(newCell);
@@ -163,6 +199,7 @@ function generateCache(cell: Cell) { //creates each of the caches
     localCache.coins.push({ cell: cell, serial: coinCount }); //coins generated are unique and random, serial number is from genRandom
   }
   B.knownCache.push(localCache);
+  B.OGCache = B.knownCache;
 }
 
 function genRandom(min: number, max: number) { //this creates a random number between the min and max
@@ -269,6 +306,7 @@ function markerManager() { //will remove or regenerate cache marker depending on
 function createMarker(localCache: Cache) { //creates a singular marker
   const cacheMarker = leaflet.marker(
     B.getLatLngOfCell(localCache.cell),
+    { icon: markerIcon },
   );
   cachePopup(cacheMarker, localCache);
   cMarkers.set(JSON.stringify(localCache.cell), cacheMarker);
@@ -310,6 +348,7 @@ function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) { //rem
       }
     });
     cMarkers.clear();
+    leaflet.layerGroup(leaflet.layerGroup().getLayers()).clearLayers();
   }
 }
 
@@ -365,6 +404,7 @@ function restoreSavedGame() { //restores game from local to game
   B.knownCache.forEach((cache) => {
     const cacheMarker = leaflet.marker(
       B.getLatLngOfCell(cache.cell),
+      { icon: markerIcon },
     );
     cachePopup(cacheMarker, cache);
     cMarkers.set(JSON.stringify(cache.cell), cacheMarker);

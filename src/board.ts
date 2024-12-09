@@ -27,6 +27,7 @@ interface board extends Momento<string> {
   cellDegrees: number;
   knownCache: Cache[];
   MomentoCache: string[];
+  OGCache: Cache[];
   knownCells: Cell[];
   playerLocation: number[];
   playerHistory: number[][];
@@ -43,6 +44,7 @@ export let B: board = {
   knownCells: [],
   knownCache: [],
   MomentoCache: [],
+  OGCache: [],
   playerLocation: [369894, -1220627],
   playerHistory: [[369894, -1220627]],
 
