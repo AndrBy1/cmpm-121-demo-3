@@ -100,7 +100,6 @@ function setupUIControls() { //this sets up the controls for movement and resett
       markerManager();
     });
     document.body.append(button);
-    //localStorage.setItem("storedCache", JSON.stringify(B.knownCache));
   });
 }
 
@@ -120,11 +119,7 @@ leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 if (
   localStorage.getItem("stored-Caches") && localStorage.getItem("stored-cells")
 ) {
-  console.log(
-    "There is stored cache: " + localStorage.getItem("stored-Caches"),
-  );
   B.knownCache = JSON.parse(localStorage.getItem("stored-Caches")!);
-  console.log("knownCache size: " + B.knownCache.length);
   B.OGCache = JSON.parse(localStorage.getItem("stored-Caches")!);
   makeAllMarkings();
   B.knownCells = JSON.parse(localStorage.getItem("stored-cells")!);
@@ -250,7 +245,6 @@ function popupButtonClick( //function for each of the buttons in the popup, what
     }
   }
   coinDisplay.innerHTML = "Coins: " + B.coinBag.length;
-  //content.innerHTML = popupTxt(localCache);
   content.querySelector<HTMLSpanElement>("#count")!.innerHTML = popupTxt(
     localCache,
   );
@@ -287,7 +281,6 @@ function markerManager() { //will remove or regenerate cache marker depending on
         cMarkers.delete(JSON.stringify(B.knownCache[c].cell));
       }
     } else if (!cMarkers.has(JSON.stringify(B.knownCache[c].cell))) {
-      console.log("marker created");
       createMarker(B.knownCache[c]);
     }
     let haveItem = false;
@@ -341,7 +334,6 @@ function removeAllMarkings(removeLines: boolean, removeMarkers: boolean) { //rem
   if (removeMarkers) {
     B.knownCache.forEach((cache) => {
       if (cMarkers.has(JSON.stringify(cache.cell))) {
-        console.log("Removing marker");
         const cacheMarker = cMarkers.get(JSON.stringify(cache.cell));
         map.removeLayer(cacheMarker!);
         cMarkers.delete(JSON.stringify(cache.cell));
